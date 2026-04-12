@@ -5,556 +5,395 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Graduation 2025 — Find Your Photos | Faculty of Agriculture, Alexandria University</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=EB+Garamond:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ════════════════════════════════════════════
-   DESIGN TOKENS
-════════════════════════════════════════════ */
 :root {
-  --navy:        #07101e;
-  --navy-mid:    #0d1c38;
-  --navy-light:  #162850;
-  --gold:        #c9a84c;
-  --gold-light:  #e8c97a;
-  --gold-pale:   #f5e6b8;
-  --sky:         #4a90d9;
-  --cream:       #f8f4e8;
-  --cream-dim:   rgba(248,244,232,.65);
-  --red:         #e05555;
-  --green:       #4ade80;
-  --radius-sm:   8px;
-  --radius-md:   14px;
-  --radius-lg:   20px;
-  --shadow-gold: 0 0 40px rgba(201,168,76,.12);
-  --shadow-deep: 0 20px 60px rgba(0,0,0,.5);
-  --transition:  .22s cubic-bezier(.4,0,.2,1);
+  --navy:      #040c1a;
+  --navy-mid:  #081428;
+  --navy-card: rgba(8,20,40,0.96);
+  --gold:      #d4a72c;
+  --gold-b:    #f2c535;
+  --gold-l:    #f6d96a;
+  --gold-dim:  rgba(212,167,44,0.14);
+  --cream:     #f7f0df;
+  --cream-dim: rgba(247,240,223,0.5);
+  --sky:       #5a9ee8;
+  --green:     #4ade80;
+  --r-sm:8px;--r-md:14px;--r-lg:22px;--r-xl:30px;
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--cream);min-height:100vh;overflow-x:hidden}
+img{display:block;max-width:100%}
+button{font-family:inherit;cursor:pointer}
+a{color:inherit;text-decoration:none}
+.ar{font-family:'Noto Naskh Arabic',serif;direction:rtl}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--navy)}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px}
+
+/* BACKGROUND */
+.bg-base{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -10%,rgba(212,167,44,0.09) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 10%  80%,rgba(90,158,232,0.06) 0%,transparent 50%),
+    radial-gradient(ellipse 60% 40% at 90%  80%,rgba(90,158,232,0.04) 0%,transparent 50%),
+    linear-gradient(180deg,#050d1c 0%,#040c1a 60%,#060e1e 100%);
+}
+.bg-grid{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(212,167,44,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(212,167,44,0.04) 1px,transparent 1px);
+  background-size:64px 64px;
+}
+.bg-beam{
+  position:fixed;top:-20%;left:-40%;z-index:0;pointer-events:none;
+  width:80%;height:140%;
+  background:linear-gradient(105deg,transparent 0%,rgba(212,167,44,0.03) 40%,rgba(212,167,44,0.07) 50%,rgba(212,167,44,0.03) 60%,transparent 100%);
+  animation:sweepBeam 8s ease-in-out infinite alternate;
+}
+@keyframes sweepBeam{from{left:-40%}to{left:60%}}
+#starCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+.page{position:relative;z-index:1}
+
+/* ═══════════════════════
+   HEADER — true 3-col grid
+═══════════════════════ */
+.header{
+  position:sticky;top:0;z-index:200;
+  background:rgba(4,12,26,0.93);
+  border-bottom:1px solid rgba(212,167,44,0.18);
+  backdrop-filter:blur(24px);
+}
+.header-inner{
+  max-width:1280px;margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  padding:0 28px;height:78px;
+}
+.h-left{display:flex;align-items:center;gap:12px;justify-content:flex-start}
+.h-right{display:flex;align-items:center;gap:12px;justify-content:flex-end}
+.h-center{display:flex;flex-direction:column;align-items:center;gap:0;padding:0 24px}
+
+.h-logo{
+  height:54px;width:54px;object-fit:contain;flex-shrink:0;
+  filter:drop-shadow(0 0 10px rgba(212,167,44,0.45));
+  transition:filter var(--tr);
+}
+.h-logo:hover{filter:drop-shadow(0 0 20px rgba(212,167,44,0.8))}
+.h-logo-fb{
+  width:54px;height:54px;border-radius:50%;flex-shrink:0;
+  background:var(--gold-dim);border:1px solid rgba(212,167,44,0.3);
+  display:grid;place-items:center;font-size:24px;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; font-size: 16px; }
-body {
-  font-family: 'EB Garamond', Georgia, serif;
-  background: var(--navy);
-  color: var(--cream);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-img { display: block; max-width: 100%; }
-button { font-family: inherit; cursor: pointer; }
-a { color: inherit; }
-.arabic { font-family: 'Noto Naskh Arabic', serif; direction: rtl; }
+.h-name{display:flex;flex-direction:column;gap:4px}
+.h-en{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--sky);font-weight:600;white-space:nowrap}
+.h-ar{font-family:'Noto Naskh Arabic',serif;font-size:11px;color:var(--gold-l);font-weight:500;direction:rtl;white-space:nowrap}
+.h-right .h-name{align-items:flex-end}
 
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--navy); }
-::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+.hc-title{font-family:'Playfair Display',serif;font-size:20px;letter-spacing:.05em;color:var(--gold-l);font-weight:700;white-space:nowrap}
+.hc-line{width:50px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:4px 0}
+.hc-ar{font-family:'Noto Naskh Arabic',serif;font-size:12px;color:var(--cream-dim);direction:rtl}
 
-/* ════════════════════════════════════════════
-   ANIMATED BACKGROUND
-════════════════════════════════════════════ */
-.bg {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background: radial-gradient(ellipse 70% 50% at 50% -10%,
-    rgba(74,144,217,.1) 0%, transparent 60%),
-    linear-gradient(180deg, #050d1a 0%, #07101e 50%, #0a1628 100%);
+/* HERO */
+.hero{
+  min-height:92vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:80px 24px 60px;position:relative;
 }
-.bg-stars { position: absolute; inset: 0; }
-.star {
-  position: absolute; border-radius: 50%; background: #fff;
-  animation: twinkle var(--d,3s) ease-in-out infinite var(--delay,0s);
+.hero-vline{width:1px;height:68px;background:linear-gradient(to bottom,transparent,rgba(212,167,44,0.55));margin:0 auto 28px}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:10px;
+  border:1px solid rgba(212,167,44,0.32);border-radius:100px;
+  padding:8px 24px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold);background:rgba(212,167,44,0.07);margin-bottom:38px;
+  animation:fadeUp .8s ease both;
 }
-@keyframes twinkle {
-  0%,100% { opacity: var(--min-op,.1); transform: scale(1); }
-  50%      { opacity: var(--max-op,.7); transform: scale(1.2); }
+.tag-dot{width:7px;height:7px;border-radius:50%;background:var(--gold-b);box-shadow:0 0 8px var(--gold-b);animation:dotPulse 2.4s ease-in-out infinite}
+@keyframes dotPulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
+.hero-h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(52px,7.5vw,100px);font-weight:900;line-height:1.0;letter-spacing:-.02em;
+  margin-bottom:22px;animation:fadeUp .85s .08s ease both;
 }
-.bg-beam {
-  position: absolute; top: -10%; left: 50%; width: 500px; height: 110vh;
-  background: linear-gradient(160deg,
-    transparent 0%, rgba(201,168,76,.04) 40%, transparent 70%);
-  transform-origin: top center;
-  animation: beam 6s ease-in-out infinite;
+.h1-w{display:block;color:var(--cream)}
+.h1-g{
+  display:block;
+  background:linear-gradient(120deg,#b07c10 0%,var(--gold-b) 28%,var(--gold-l) 52%,var(--gold-b) 72%,#b07c10 100%);
+  background-size:220% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shimmer 5s linear infinite;
 }
-@keyframes beam { 0%,100%{opacity:.5;rotate:-5deg} 50%{opacity:1;rotate:5deg} }
+@keyframes shimmer{0%{background-position:0%}100%{background-position:220%}}
+.hero-desc{
+  font-size:clamp(15px,1.8vw,18px);line-height:1.85;color:var(--cream-dim);
+  max-width:520px;margin:0 auto 14px;font-weight:300;animation:fadeUp .85s .16s ease both;
+}
+.hero-ar{font-size:16px;color:rgba(212,167,44,0.6);animation:fadeUp .85s .22s ease both}
+.scroll-ind{
+  position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  animation:fadeUp .85s .4s ease both;
+}
+.s-label{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(212,167,44,0.38)}
+.s-track{width:1px;height:52px;background:rgba(212,167,44,0.25);position:relative;overflow:hidden}
+.s-pill{position:absolute;top:0;left:-1px;width:3px;height:14px;border-radius:2px;background:linear-gradient(to bottom,var(--gold-b),transparent);animation:scrollDown 2s ease-in-out infinite}
+@keyframes scrollDown{0%{top:0;opacity:1}100%{top:50px;opacity:0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 
-/* ════════════════════════════════════════════
-   LAYOUT
-════════════════════════════════════════════ */
-.page { position: relative; z-index: 1; }
-.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+/* LAYOUT */
+.wrap{max-width:960px;margin:0 auto;padding:0 24px 80px}
+.wrap-wide{max-width:1280px;margin:0 auto;padding:0 24px 80px}
+.sec-label{display:flex;align-items:center;gap:16px;margin-bottom:32px}
+.sec-rule{flex:1;height:1px;background:linear-gradient(90deg,rgba(212,167,44,0.22),transparent)}
+.sec-rule.r{background:linear-gradient(90deg,transparent,rgba(212,167,44,0.22))}
+.sec-num{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(212,167,44,0.45);font-weight:600}
+.gem-div{display:flex;align-items:center;gap:18px;max-width:960px;margin:0 auto;padding:0 24px}
+.gem-rule{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(212,167,44,0.15),transparent)}
+.gem{width:8px;height:8px;border-radius:2px;background:var(--gold);transform:rotate(45deg);box-shadow:0 0 12px rgba(212,167,44,0.6)}
 
-/* ════════════════════════════════════════════
-   HEADER
-════════════════════════════════════════════ */
-.header {
-  position: sticky; top: 0; z-index: 200;
-  background: rgba(5,13,26,.95);
-  border-bottom: 1px solid rgba(201,168,76,.2);
-  backdrop-filter: blur(20px);
+/* CARD */
+.card{
+  background:var(--navy-card);border:1px solid rgba(212,167,44,0.16);
+  border-radius:var(--r-xl);overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.02),0 40px 80px rgba(0,0,0,0.5),0 0 60px rgba(212,167,44,0.04);
 }
-.header-inner {
-  max-width: 1200px; margin: 0 auto;
-  display: flex; align-items: center; gap: 12px; padding: 12px 24px;
-}
-.hlogo { display: flex; align-items: center; gap: 10px; }
-.hlogo-text { display: flex; flex-direction: column; gap: 2px; }
-.hlogo-en { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--sky); font-weight: 600; }
-.hlogo-ar { font-size: 12px; color: var(--gold-light); }
-.hdivider { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,168,76,.3), transparent); }
-.htitle { text-align: center; flex-shrink: 0; }
-.htitle-en { font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold-light); font-weight: 700; }
-.htitle-ar { font-size: 12px; color: var(--cream-dim); }
+.card-head{padding:28px 36px 22px;border-bottom:1px solid rgba(212,167,44,0.08);display:flex;align-items:flex-start;gap:18px}
+.card-icon{width:46px;height:46px;border-radius:var(--r-md);background:var(--gold-dim);border:1px solid rgba(212,167,44,0.22);display:grid;place-items:center;font-size:22px;flex-shrink:0}
+.card-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--cream);margin-bottom:4px}
+.card-sub{font-size:13px;color:var(--cream-dim);font-weight:300;line-height:1.6}
+.card-body{padding:36px}
 
-/* ════════════════════════════════════════════
-   DIAGNOSTICS BANNER
-════════════════════════════════════════════ */
-#diagBanner {
-  max-width: 860px; margin: 16px auto 0; padding: 0 24px;
+/* DROP ZONE */
+.drop-zone{
+  border:2px dashed rgba(212,167,44,0.22);border-radius:var(--r-lg);
+  padding:64px 24px;text-align:center;cursor:pointer;
+  background:rgba(212,167,44,0.02);transition:all var(--tr);position:relative;overflow:hidden;
 }
-.diag-box {
-  border-radius: var(--radius-sm);
-  padding: 14px 18px; font-size: 13px; line-height: 1.7;
-  display: flex; gap: 12px; align-items: flex-start;
-}
-.diag-ok    { background: rgba(74,222,128,.08); border: 1px solid rgba(74,222,128,.3); color: #86efac; }
-.diag-warn  { background: rgba(251,191,36,.08); border: 1px solid rgba(251,191,36,.3); color: #fde68a; }
-.diag-error { background: rgba(224,85,85,.10);  border: 1px solid rgba(224,85,85,.35); color: #fca5a5; }
-.diag-icon  { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-.diag-title { font-weight: 700; margin-bottom: 3px; }
-.diag-detail { opacity: .8; font-size: 12px; }
-.diag-detail code {
-  background: rgba(255,255,255,.08); border-radius: 4px;
-  padding: 1px 5px; font-family: monospace; font-size: 11px;
-}
+.drop-zone::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(212,167,44,0.08),transparent);opacity:0;transition:opacity var(--tr)}
+.drop-zone:hover::after,.drop-zone.drag-over::after{opacity:1}
+.drop-zone:hover,.drop-zone.drag-over{border-color:rgba(212,167,44,0.6);background:rgba(212,167,44,0.04);transform:translateY(-2px)}
+.dz-rings{position:relative;width:88px;height:88px;margin:0 auto 28px}
+.dz-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(212,167,44,0.25);animation:ringBreath 3s ease-in-out infinite}
+.dz-ring:nth-child(2){inset:-10px;animation-delay:.65s;opacity:.5}
+.dz-ring:nth-child(3){inset:-20px;animation-delay:1.3s;opacity:.28}
+@keyframes ringBreath{0%,100%{transform:scale(1);opacity:.28}50%{transform:scale(1.04);opacity:.85}}
+.dz-core{position:absolute;inset:0;border-radius:50%;background:linear-gradient(145deg,rgba(212,167,44,0.22),rgba(90,158,232,0.1));border:1px solid rgba(212,167,44,0.3);display:grid;place-items:center;font-size:34px;z-index:1}
+.dz-title{font-family:'Playfair Display',serif;font-size:24px;color:var(--gold-l);font-weight:700;margin-bottom:10px}
+.dz-sub{font-size:14px;color:var(--cream-dim);line-height:1.75;max-width:380px;margin:0 auto;font-weight:300}
 
-/* ════════════════════════════════════════════
-   HERO
-════════════════════════════════════════════ */
-.hero {
-  text-align: center;
-  padding: 80px 24px 60px;
-  max-width: 900px; margin: 0 auto;
-}
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  border: 1px solid rgba(201,168,76,.35); border-radius: 100px;
-  padding: 7px 20px; font-size: 12px; letter-spacing: .18em;
-  text-transform: uppercase; color: var(--gold);
-  background: rgba(201,168,76,.06); margin-bottom: 32px;
-}
-.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }
+/* PREVIEW */
+.prev-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.prev-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold-l);font-weight:700}
+.prev-count{font-size:12px;color:var(--cream-dim);margin-top:2px}
+.prev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px;margin-bottom:28px}
+.prev-thumb{position:relative;border-radius:var(--r-sm);overflow:hidden;aspect-ratio:1;border:1px solid rgba(212,167,44,0.14)}
+.prev-thumb img{width:100%;height:100%;object-fit:cover}
+.prev-del{position:absolute;top:4px;right:4px;background:rgba(200,40,40,.9);color:#fff;border:none;width:22px;height:22px;border-radius:50%;font-size:14px;font-weight:700;display:none;align-items:center;justify-content:center}
+.prev-thumb:hover .prev-del{display:flex}
 
-.hero-h1 {
-  font-size: clamp(38px, 6vw, 76px);
-  font-weight: 700; line-height: 1.08;
-  letter-spacing: -.01em; margin-bottom: 10px;
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:var(--r-sm);border:none;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;transition:all var(--tr)}
+.btn:disabled{opacity:.3;cursor:not-allowed;transform:none!important}
+.btn-gold{background:linear-gradient(135deg,var(--gold-b),#9e7210);color:#060300;box-shadow:0 4px 20px rgba(212,167,44,0.32)}
+.btn-gold:hover:not(:disabled){background:linear-gradient(135deg,var(--gold-l),var(--gold));transform:translateY(-2px);box-shadow:0 8px 28px rgba(212,167,44,0.5)}
+.btn-outline{background:transparent;color:var(--gold-l);border:1px solid rgba(212,167,44,0.28)}
+.btn-outline:hover:not(:disabled){background:rgba(212,167,44,0.08);border-color:var(--gold)}
+.btn-blue{background:linear-gradient(135deg,#1a56db,#1638b0);color:#fff;box-shadow:0 4px 18px rgba(26,86,219,.3)}
+.btn-blue:hover:not(:disabled){background:linear-gradient(135deg,#2563eb,#1a56db);transform:translateY(-2px)}
+.btn-green{background:linear-gradient(135deg,#145d2c,#0f4220);color:#6ee7a0;box-shadow:0 4px 18px rgba(20,93,44,.28)}
+.btn-green:hover:not(:disabled){background:linear-gradient(135deg,#166534,#145d2c);transform:translateY(-2px)}
+.btn-search{
+  width:100%;justify-content:center;padding:20px;font-size:15px;letter-spacing:.13em;
+  border-radius:var(--r-lg);
+  background:linear-gradient(135deg,var(--gold-b) 0%,#9e7210 50%,var(--gold-b) 100%);
+  background-size:200% 100%;color:#060300;
+  box-shadow:0 6px 32px rgba(212,167,44,0.42);
+  position:relative;overflow:hidden;transition:all .4s ease;
 }
-.hero-h1 span {
-  display: block;
-  background: linear-gradient(135deg, #b8922a 0%, var(--gold-light) 45%, var(--gold) 70%, #b8922a 100%);
-  background-size: 300% 100%;
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shimmer 4s linear infinite;
-}
-@keyframes shimmer { 0%{background-position:0%} 100%{background-position:300%} }
-.hero-ar { font-size: clamp(18px,2.5vw,28px); color: rgba(248,244,232,.6); margin-bottom: 20px; }
-.hero-sub { font-size: 19px; line-height: 1.7; color: var(--cream-dim); max-width: 580px; margin: 0 auto 48px; }
+.btn-search::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);transform:translateX(-100%);transition:transform .65s ease}
+.btn-search:hover::before{transform:translateX(100%)}
+.btn-search:hover:not(:disabled){background-position:right;transform:translateY(-3px);box-shadow:0 12px 40px rgba(212,167,44,0.58)}
+.spinner{width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(0,0,0,0.2);border-top-color:currentColor;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-.hero-stats {
-  display: flex; align-items: center; justify-content: center;
-  gap: 28px; flex-wrap: wrap;
-  padding: 22px 0;
-  border-top: 1px solid rgba(201,168,76,.12);
-  border-bottom: 1px solid rgba(201,168,76,.12);
-}
-.stat { text-align: center; }
-.stat-n { font-size: 26px; font-weight: 700; color: var(--gold-light); display: block; letter-spacing: -.02em; }
-.stat-l { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(248,244,232,.4); }
-.stat-sep { width: 1px; height: 32px; background: rgba(201,168,76,.18); }
+/* RESULTS */
+.res-head{padding:28px 36px 22px;border-bottom:1px solid rgba(212,167,44,0.08)}
+.res-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--gold-l);display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.live-dot{width:10px;height:10px;border-radius:50%;background:var(--green);flex-shrink:0;box-shadow:0 0 8px var(--green);animation:livePulse 1.8s ease-in-out infinite}
+@keyframes livePulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
+.res-sub{font-size:13px;color:var(--cream-dim);font-weight:300}
+.res-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
 
-/* ════════════════════════════════════════════
-   CARDS
-════════════════════════════════════════════ */
-.card {
-  border: 1px solid rgba(201,168,76,.22);
-  border-radius: var(--radius-lg);
-  background: linear-gradient(145deg, rgba(17,32,64,.92) 0%, rgba(10,22,40,.96) 100%);
-  box-shadow: var(--shadow-gold), 0 0 0 1px rgba(255,255,255,.03) inset;
-  overflow: hidden;
-}
-.card-head {
-  padding: 24px 32px 18px;
-  border-bottom: 1px solid rgba(201,168,76,.1);
-  display: flex; align-items: center; gap: 14px;
-}
-.card-icon {
-  width: 42px; height: 42px; border-radius: var(--radius-sm);
-  background: rgba(201,168,76,.12);
-  border: 1px solid rgba(201,168,76,.25);
-  display: grid; place-items: center; font-size: 20px; flex-shrink: 0;
-}
-.card-title { font-size: 20px; font-weight: 600; }
-.card-sub { font-size: 13px; color: rgba(248,244,232,.45); margin-top: 2px; }
-.card-body { padding: 32px; }
+/* FILTER BAR */
+.filter-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;padding:20px 36px;background:rgba(255,255,255,0.012);border-bottom:1px solid rgba(212,167,44,0.06)}
+.f-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(212,167,44,0.48);font-weight:600;margin-bottom:8px;display:block}
+.f-row{display:flex;align-items:center;gap:8px}
+input[type=range]{flex:1;accent-color:var(--gold);cursor:pointer}
+.conf-val{color:var(--gold-l);font-weight:600;min-width:42px;text-align:right;font-size:13px}
+select,input[type=text]{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(212,167,44,0.16);color:var(--cream);padding:9px 13px;border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;transition:border-color var(--tr)}
+select:focus,input[type=text]:focus{border-color:var(--gold)}
+select option{background:#081428}
+.view-btns{display:flex;gap:4px}
+.view-btn{padding:8px 14px;border-radius:6px;border:1px solid rgba(212,167,44,0.14);background:transparent;color:rgba(247,240,223,0.38);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all var(--tr);font-family:inherit;font-weight:600}
+.view-btn.active{background:rgba(212,167,44,0.15);border-color:var(--gold);color:var(--gold)}
+.view-btn:hover:not(.active){border-color:rgba(212,167,44,0.38);color:var(--gold-l)}
 
-/* ════════════════════════════════════════════
-   UPLOAD
-════════════════════════════════════════════ */
-.upload-section { max-width: 860px; margin: 0 auto; padding: 0 24px 72px; }
+/* PHOTO GRID */
+.photo-grid{padding:24px 36px}
+.grid-s{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.grid-m{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.grid-l{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.photo-card{position:relative;border-radius:var(--r-md);overflow:hidden;cursor:pointer;border:2px solid rgba(212,167,44,0.1);background:rgba(0,0,0,0.3);transition:all var(--tr)}
+.photo-card:hover{transform:translateY(-4px);border-color:rgba(212,167,44,0.48);box-shadow:0 16px 40px rgba(0,0,0,0.5),0 0 20px rgba(212,167,44,0.12)}
+.photo-card.selected{border-color:var(--gold-b);box-shadow:0 0 24px rgba(212,167,44,0.3)}
+.photo-img{width:100%;object-fit:cover;display:block;transition:transform .45s ease}
+.photo-card:hover .photo-img{transform:scale(1.05)}
+.grid-s .photo-img{height:100px}.grid-m .photo-img{height:200px}.grid-l .photo-img{height:280px}
+.photo-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(4,12,26,0.92) 0%,rgba(4,12,26,0.1) 55%,transparent 100%);opacity:0;transition:opacity var(--tr);display:flex;flex-direction:column;justify-content:flex-end;padding:14px}
+.photo-card:hover .photo-ov{opacity:1}
+.view-full{background:rgba(212,167,44,0.9);color:#060300;border:none;border-radius:6px;padding:7px 14px;font-size:11px;letter-spacing:.08em;font-weight:700;cursor:pointer;font-family:inherit;text-transform:uppercase;transition:background var(--tr)}
+.view-full:hover{background:var(--gold-l)}
+.check-box{position:absolute;top:10px;left:10px;width:22px;height:22px;border-radius:5px;background:rgba(4,12,26,0.6);border:1.5px solid rgba(247,240,223,0.3);display:flex;align-items:center;justify-content:center;transition:all var(--tr);backdrop-filter:blur(4px)}
+.photo-card.selected .check-box{background:var(--gold-b);border-color:var(--gold-l)}
+.conf-badge{position:absolute;top:10px;right:10px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.04em;backdrop-filter:blur(8px)}
+.conf-hi{background:rgba(34,197,94,.18);border:1px solid rgba(34,197,94,.4);color:#86efac}
+.conf-mid{background:rgba(212,167,44,.18);border:1px solid rgba(212,167,44,.4);color:var(--gold-l)}
+.conf-lo{background:rgba(251,146,60,.18);border:1px solid rgba(251,146,60,.4);color:#fbbf80}
+.empty{text-align:center;padding:80px 24px}
+.empty-icon{font-size:44px;margin-bottom:16px;opacity:.22}
+.empty-text{font-size:16px;color:rgba(247,240,223,0.35);font-weight:300;line-height:1.7}
 
-.drop-zone {
-  border: 2px dashed rgba(201,168,76,.25); border-radius: var(--radius-md);
-  padding: 52px 24px; text-align: center; cursor: pointer;
-  background: rgba(201,168,76,.02);
-  transition: all var(--transition);
-}
-.drop-zone:hover, .drop-zone.drag-over {
-  border-color: var(--gold);
-  background: rgba(201,168,76,.06);
-  transform: translateY(-2px);
-}
-.drop-icon {
-  width: 70px; height: 70px; border-radius: 18px; margin: 0 auto 20px;
-  background: linear-gradient(135deg, rgba(201,168,76,.22), rgba(74,144,217,.12));
-  border: 1px solid rgba(201,168,76,.28);
-  display: grid; place-items: center; font-size: 30px;
-  box-shadow: 0 0 28px rgba(201,168,76,.14);
-}
-.drop-title { font-size: 24px; color: var(--gold-light); font-weight: 600; margin-bottom: 8px; }
-.drop-sub { font-size: 15px; color: var(--cream-dim); line-height: 1.6; max-width: 360px; margin: 0 auto; }
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;z-index:1000;background:rgba(2,6,14,0.97);backdrop-filter:blur(28px);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .18s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.lb-close{position:absolute;top:22px;right:22px;background:rgba(255,255,255,0.06);border:1px solid rgba(212,167,44,0.2);color:#fff;width:46px;height:46px;border-radius:50%;font-size:18px;cursor:pointer;display:grid;place-items:center;transition:all var(--tr);z-index:10}
+.lb-close:hover{background:rgba(255,255,255,0.12)}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.06);border:1px solid rgba(212,167,44,0.2);color:#fff;width:52px;height:52px;border-radius:50%;font-size:22px;cursor:pointer;display:grid;place-items:center;transition:all var(--tr);z-index:10}
+.lb-nav:hover{background:rgba(212,167,44,0.18);border-color:rgba(212,167,44,0.5)}
+.lb-prev{left:18px}.lb-next{right:18px}
+.lb-wrap{max-width:min(90vw,960px);width:100%;position:relative}
+.lb-img{max-width:100%;max-height:78vh;object-fit:contain;border-radius:var(--r-md);border:1px solid rgba(212,167,44,0.2);display:block;margin:0 auto}
+.lb-info{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(2,6,14,0.95));padding:36px 22px 20px;border-radius:0 0 var(--r-md) var(--r-md);display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.lb-fn{font-size:15px;font-weight:500}
+.lb-meta{font-size:12px;color:var(--gold-l);margin-top:3px;font-weight:300}
+.lb-hint{position:absolute;bottom:-46px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:100px;padding:6px 20px;font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:.04em;white-space:nowrap}
 
-.preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
-.preview-title { font-size: 20px; color: var(--gold-light); font-weight: 600; }
-.preview-count { font-size: 13px; color: rgba(248,244,232,.4); margin-top: 2px; }
+/* TOAST */
+.toast-wrap{position:fixed;bottom:28px;right:28px;z-index:2000;display:flex;flex-direction:column;gap:10px}
+.toast{background:var(--navy-mid);border:1px solid rgba(212,167,44,0.22);border-radius:var(--r-sm);padding:14px 20px;font-size:14px;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:slideIn .25s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+.toast.error{border-color:rgba(224,85,85,.5);color:#fca5a5}
+.toast.success{border-color:rgba(74,222,128,.5);color:#86efac}
+.toast.info{border-color:rgba(212,167,44,.42);color:var(--gold-l)}
 
-.preview-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(90px,1fr)); gap: 10px; margin-bottom: 24px; }
-.preview-thumb { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; }
-.preview-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.preview-del {
-  position: absolute; top: 4px; right: 4px;
-  background: rgba(220,50,50,.9); color: #fff; border: none;
-  width: 22px; height: 22px; border-radius: 50%; font-size: 13px; font-weight: 700;
-  display: none; align-items: center; justify-content: center;
-}
-.preview-thumb:hover .preview-del { display: flex; }
+/* FOOTER */
+.footer{border-top:1px solid rgba(212,167,44,0.1);background:rgba(2,6,14,0.95);padding:44px 24px;text-align:center}
+.footer-logos{display:flex;justify-content:center;align-items:center;gap:28px;margin-bottom:20px}
+.footer-logos img{height:44px;opacity:.5;transition:all var(--tr);filter:grayscale(20%)}
+.footer-logos img:hover{opacity:1;filter:none}
+.footer-sep{width:1px;height:38px;background:rgba(212,167,44,0.2)}
+.footer-text{font-size:12px;color:rgba(247,240,223,0.28);line-height:2;font-weight:300}
+.footer-gold{color:var(--gold)}
 
-/* ════════════════════════════════════════════
-   BUTTONS
-════════════════════════════════════════════ */
-.btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 11px 24px; border-radius: var(--radius-sm); border: none;
-  font-size: 13px; font-weight: 600; letter-spacing: .07em;
-  text-transform: uppercase; transition: all var(--transition); text-decoration: none;
-}
-.btn:disabled { opacity: .3; cursor: not-allowed; transform: none !important; }
-
-.btn-gold {
-  background: linear-gradient(135deg, var(--gold), #9e7620);
-  color: #0d0800; box-shadow: 0 4px 18px rgba(201,168,76,.3);
-}
-.btn-gold:hover:not(:disabled) { background: linear-gradient(135deg, var(--gold-light), var(--gold)); transform: translateY(-2px); }
-
-.btn-outline {
-  background: transparent; color: var(--gold-light);
-  border: 1px solid rgba(201,168,76,.3);
-}
-.btn-outline:hover:not(:disabled) { background: rgba(201,168,76,.08); border-color: var(--gold); }
-
-.btn-blue {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #fff; box-shadow: 0 4px 18px rgba(37,99,235,.3);
-}
-.btn-blue:hover:not(:disabled) { background: linear-gradient(135deg, #3b82f6, #2563eb); transform: translateY(-2px); }
-
-.btn-green {
-  background: linear-gradient(135deg, #166534, #14532d);
-  color: #86efac; box-shadow: 0 4px 18px rgba(22,101,52,.3);
-}
-.btn-green:hover:not(:disabled) { background: linear-gradient(135deg, #15803d, #166534); transform: translateY(-2px); }
-
-.btn-search {
-  width: 100%; justify-content: center;
-  padding: 17px; font-size: 16px; letter-spacing: .1em; border-radius: var(--radius-md);
-  background: linear-gradient(135deg, var(--gold) 0%, #7a5c1a 50%, var(--gold) 100%);
-  background-size: 200% 100%; color: #0a0600;
-  box-shadow: 0 6px 28px rgba(201,168,76,.35);
-  transition: all .35s ease;
-}
-.btn-search:hover:not(:disabled) { background-position: right; transform: translateY(-2px); box-shadow: 0 10px 36px rgba(201,168,76,.5); }
-
-/* ════════════════════════════════════════════
-   SPINNER
-════════════════════════════════════════════ */
-.spinner {
-  width: 20px; height: 20px; border-radius: 50%;
-  border: 3px solid rgba(255,255,255,.2);
-  border-top-color: currentColor;
-  animation: spin .7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ════════════════════════════════════════════
-   RESULTS
-════════════════════════════════════════════ */
-.results-section { max-width: 1200px; margin: 0 auto; padding: 0 24px 80px; }
-
-.results-head { padding: 28px 32px 22px; border-bottom: 1px solid rgba(201,168,76,.1); }
-.results-title {
-  font-size: 34px; font-weight: 700; color: var(--gold-light);
-  display: flex; align-items: center; gap: 12px; margin-bottom: 4px;
-}
-.live-dot { width: 11px; height: 11px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; flex-shrink: 0; }
-.results-sub { font-size: 14px; color: rgba(248,244,232,.45); }
-.results-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
-
-/* Filter bar */
-.filter-bar {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px,1fr));
-  gap: 14px; padding: 18px 32px;
-  background: rgba(255,255,255,.012);
-  border-bottom: 1px solid rgba(201,168,76,.08);
-}
-.filter-label { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: rgba(201,168,76,.55); font-weight: 600; margin-bottom: 7px; display: block; }
-.filter-row { display: flex; align-items: center; gap: 8px; }
-input[type=range] { flex: 1; accent-color: var(--gold); cursor: pointer; }
-.conf-val { color: var(--gold-light); font-weight: 700; min-width: 40px; text-align: right; font-size: 14px; }
-
-select, input[type=text] {
-  width: 100%; background: rgba(255,255,255,.05);
-  border: 1px solid rgba(201,168,76,.18);
-  color: var(--cream); padding: 8px 12px;
-  border-radius: var(--radius-sm); font-size: 13px;
-  font-family: inherit; outline: none; transition: border-color var(--transition);
-}
-select:focus, input[type=text]:focus { border-color: var(--gold); }
-select option { background: #0d1c38; }
-
-.view-btns { display: flex; gap: 4px; }
-.view-btn {
-  padding: 7px 12px; border-radius: 6px;
-  border: 1px solid rgba(201,168,76,.18);
-  background: transparent; color: rgba(248,244,232,.5);
-  font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
-  cursor: pointer; transition: all var(--transition); font-family: inherit; font-weight: 600;
-}
-.view-btn.active { background: rgba(201,168,76,.15); border-color: var(--gold); color: var(--gold); }
-.view-btn:hover:not(.active) { border-color: rgba(201,168,76,.4); color: var(--gold-light); }
-
-/* Photo grid */
-.photo-grid { padding: 22px 32px; }
-.grid-s { display: grid; grid-template-columns: repeat(auto-fill,minmax(110px,1fr)); gap: 8px; }
-.grid-m { display: grid; grid-template-columns: repeat(auto-fill,minmax(210px,1fr)); gap: 12px; }
-.grid-l { display: grid; grid-template-columns: repeat(auto-fill,minmax(310px,1fr)); gap: 16px; }
-
-.photo-card {
-  position: relative; border-radius: var(--radius-md); overflow: hidden; cursor: pointer;
-  border: 2px solid rgba(201,168,76,.1);
-  background: rgba(0,0,0,.25);
-  transition: all var(--transition);
-}
-.photo-card:hover { transform: translateY(-3px); border-color: rgba(201,168,76,.38); box-shadow: 0 10px 28px rgba(0,0,0,.4); }
-.photo-card.selected { border-color: var(--gold); box-shadow: 0 0 18px rgba(201,168,76,.28); }
-
-.photo-img { width: 100%; object-fit: cover; display: block; }
-.grid-s .photo-img { height: 100px; }
-.grid-m .photo-img { height: 195px; }
-.grid-l .photo-img { height: 270px; }
-
-.photo-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.1) 45%, transparent 100%);
-  opacity: 0; transition: opacity var(--transition);
-  display: flex; flex-direction: column; justify-content: flex-end; padding: 12px;
-}
-.photo-card:hover .photo-overlay { opacity: 1; }
-.view-full {
-  background: rgba(201,168,76,.88); color: #0a0600;
-  border: none; border-radius: 6px; padding: 6px 12px;
-  font-size: 11px; letter-spacing: .07em; font-weight: 700;
-  cursor: pointer; font-family: inherit; text-transform: uppercase;
-  transition: background var(--transition);
-}
-.view-full:hover { background: var(--gold-light); }
-
-.check-box {
-  position: absolute; top: 8px; left: 8px;
-  width: 22px; height: 22px; border-radius: 5px;
-  background: rgba(0,0,0,.55); border: 2px solid rgba(255,255,255,.35);
-  display: flex; align-items: center; justify-content: center;
-  transition: all var(--transition); backdrop-filter: blur(4px);
-}
-.photo-card.selected .check-box { background: var(--gold); border-color: var(--gold); }
-
-.conf-badge {
-  position: absolute; top: 8px; right: 8px;
-  padding: 3px 8px; border-radius: 20px;
-  font-size: 11px; font-weight: 700; letter-spacing: .04em;
-  backdrop-filter: blur(8px);
-}
-.conf-hi  { background: rgba(34,197,94,.2);  border: 1px solid rgba(34,197,94,.45);  color: #86efac; }
-.conf-mid { background: rgba(201,168,76,.2); border: 1px solid rgba(201,168,76,.45); color: var(--gold-light); }
-.conf-lo  { background: rgba(251,146,60,.2); border: 1px solid rgba(251,146,60,.45); color: #fbbf80; }
-
-/* Empty state */
-.empty { text-align: center; padding: 72px 24px; }
-.empty-icon { font-size: 44px; margin-bottom: 14px; opacity: .35; }
-.empty-text { font-size: 17px; color: rgba(248,244,232,.4); }
-
-/* ════════════════════════════════════════════
-   LIGHTBOX
-════════════════════════════════════════════ */
-.lightbox {
-  position: fixed; inset: 0; z-index: 1000;
-  background: rgba(0,0,0,.96); backdrop-filter: blur(24px);
-  display: flex; align-items: center; justify-content: center; padding: 20px;
-  animation: fadeIn .18s ease;
-}
-@keyframes fadeIn { from{opacity:0} to{opacity:1} }
-
-.lb-close {
-  position: absolute; top: 20px; right: 20px;
-  background: rgba(255,255,255,.07); border: 1px solid rgba(201,168,76,.25);
-  color: #fff; width: 46px; height: 46px; border-radius: 50%;
-  font-size: 20px; cursor: pointer; display: grid; place-items: center;
-  transition: all var(--transition); z-index: 10;
-}
-.lb-close:hover { background: rgba(255,255,255,.14); }
-
-.lb-nav {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  background: rgba(255,255,255,.07); border: 1px solid rgba(201,168,76,.25);
-  color: #fff; width: 50px; height: 50px; border-radius: 50%;
-  font-size: 22px; cursor: pointer; display: grid; place-items: center;
-  transition: all var(--transition); z-index: 10;
-}
-.lb-nav:hover { background: rgba(201,168,76,.18); }
-.lb-prev { left: 16px; }
-.lb-next { right: 16px; }
-
-.lb-wrap { max-width: min(90vw, 960px); width: 100%; position: relative; }
-.lb-img { max-width: 100%; max-height: 78vh; object-fit: contain; border-radius: var(--radius-md); border: 2px solid rgba(201,168,76,.18); }
-.lb-info {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(transparent, rgba(0,0,0,.92));
-  padding: 32px 22px 18px; border-radius: 0 0 var(--radius-md) var(--radius-md);
-  display: flex; justify-content: space-between; align-items: flex-end; gap: 12px;
-}
-.lb-fn { font-size: 15px; color: #fff; font-weight: 500; }
-.lb-meta { font-size: 12px; color: var(--gold-light); margin-top: 3px; }
-.lb-hint {
-  position: absolute; bottom: -44px; left: 50%; transform: translateX(-50%);
-  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
-  border-radius: 100px; padding: 6px 18px;
-  font-size: 11px; color: rgba(255,255,255,.35); letter-spacing: .04em; white-space: nowrap;
-}
-
-/* ════════════════════════════════════════════
-   TOAST
-════════════════════════════════════════════ */
-.toast-container { position: fixed; bottom: 28px; right: 28px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
-.toast {
-  background: var(--navy-mid); border: 1px solid rgba(201,168,76,.25);
-  border-radius: var(--radius-sm); padding: 14px 18px;
-  font-size: 14px; max-width: 340px;
-  box-shadow: var(--shadow-deep);
-  animation: slideIn .25s ease;
-}
-@keyframes slideIn { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
-.toast.error   { border-color: rgba(224,85,85,.5); color: #fca5a5; }
-.toast.success { border-color: rgba(74,222,128,.5); color: #86efac; }
-.toast.info    { border-color: rgba(201,168,76,.4); color: var(--gold-light); }
-
-/* ════════════════════════════════════════════
-   FOOTER
-════════════════════════════════════════════ */
-.footer {
-  border-top: 1px solid rgba(201,168,76,.12);
-  background: rgba(4,9,18,.9); padding: 36px 24px;
-  text-align: center;
-}
-.footer-text { font-size: 13px; color: rgba(248,244,232,.35); line-height: 1.9; }
-.footer-gold { color: var(--gold); }
-
-/* ════════════════════════════════════════════
-   RESPONSIVE
-════════════════════════════════════════════ */
-@media (max-width: 640px) {
-  .header-inner { padding: 10px 14px; }
-  .hdivider, .htitle { display: none; }
-  .hero { padding: 40px 16px 36px; }
-  .upload-section, .results-section { padding: 0 12px 48px; }
-  .card-body, .photo-grid, .filter-bar, .results-head { padding: 18px; }
-  .results-title { font-size: 24px; }
-  .stat-sep { display: none; }
-  .hero-stats { gap: 14px; }
+@media(max-width:768px){
+  .header-inner{padding:0 14px;height:62px}
+  .h-center{display:none}
+  .h-logo,.h-logo-fb{width:40px;height:40px;font-size:20px}
+  .hero{min-height:85vh;padding:60px 16px 48px}
+  .card-body,.photo-grid,.filter-bar,.res-head,.card-head{padding:18px}
+  .res-title{font-size:24px}
 }
 </style>
 </head>
 <body>
 
-<!-- Background -->
-<div class="bg">
-  <div class="bg-stars" id="bgStars"></div>
-  <div class="bg-beam"></div>
-</div>
-
-<!-- Toast container -->
-<div class="toast-container" id="toastContainer"></div>
+<div class="bg-base"></div>
+<div class="bg-grid"></div>
+<div class="bg-beam"></div>
+<canvas id="starCanvas"></canvas>
+<div class="toast-wrap" id="toastWrap"></div>
 
 <div class="page">
 
-<!-- ── HEADER ── -->
+<!-- ══ HEADER — 3-column symmetric ══ -->
 <header class="header">
   <div class="header-inner">
-    <div class="hlogo">
-      <div class="hlogo-text">
-        <span class="hlogo-en">Faculty of Agriculture · Alex Uni</span>
-        <span class="hlogo-ar arabic">كلية الزراعة — جامعة الإسكندرية</span>
+
+    <!-- LEFT: Faculty -->
+    <div class="h-left">
+      <img src="college.png" alt="كلية الزراعة" class="h-logo"
+           onerror="this.outerHTML='<div class=h-logo-fb>🌾</div>'">
+      <div class="h-name">
+        <span class="h-en">Faculty of Agriculture · Alex Uni</span>
+        <span class="h-ar">كلية الزراعة — جامعة الإسكندرية</span>
       </div>
     </div>
-    <div class="hdivider"></div>
-    <div class="htitle">
-      <div class="htitle-en">Graduation 2025</div>
-      <div class="htitle-ar arabic">حفل التخرج ٢٠٢٥</div>
+
+    <!-- CENTER: Event title -->
+    <div class="h-center">
+      <div class="hc-title">Graduation 2025</div>
+      <div class="hc-line"></div>
+      <div class="hc-ar">حفل التخرج ٢٠٢٥</div>
     </div>
-    <div class="hdivider"></div>
-    <div class="hlogo" style="flex-direction:row-reverse">
-      <div class="hlogo-text" style="text-align:right">
-        <span class="hlogo-en">Students Union</span>
-        <span class="hlogo-ar arabic">اتحاد الطلاب</span>
+
+    <!-- RIGHT: Union -->
+    <div class="h-right">
+      <div class="h-name">
+        <span class="h-en">Students Union</span>
+        <span class="h-ar">اتحاد الطلاب</span>
       </div>
+      <img src="union.png" alt="اتحاد الطلاب" class="h-logo"
+           onerror="this.outerHTML='<div class=h-logo-fb>🎓</div>'">
     </div>
+
   </div>
 </header>
 
-<!-- ── DIAGNOSTICS ── -->
-<div id="diagBanner"></div>
-
-<!-- ── HERO ── -->
+<!-- ══ HERO ══ -->
 <section class="hero">
-  <div class="hero-badge"><span class="badge-dot"></span>AI-Powered Face Recognition</div>
-  <h1 class="hero-h1">Find Your<span>Graduation Moments</span></h1>
-  <p class="hero-ar arabic">تهانينا يا خريجي دفعة ٢٠٢٥ 🎓</p>
-  <p class="hero-sub">Upload a clear photo and our AI instantly finds every graduation photo featuring your face — from the entire ceremony archive.</p>
-  <div class="hero-stats">
-    <div class="stat"><span class="stat-n" id="statPhotos">—</span><span class="stat-l">Photos Indexed</span></div>
-    <div class="stat-sep"></div>
-    <div class="stat"><span class="stat-n">99.8%</span><span class="stat-l">Accuracy Rate</span></div>
-    <div class="stat-sep"></div>
-    <div class="stat"><span class="stat-n">&lt;5s</span><span class="stat-l">Search Time</span></div>
-    <div class="stat-sep"></div>
-    <div class="stat"><span class="stat-n">2025</span><span class="stat-l">Graduation Class</span></div>
+  <div class="hero-vline"></div>
+
+  <div class="hero-tag">
+    <span class="tag-dot"></span>
+    AI-Powered Face Recognition
+  </div>
+
+  <h1 class="hero-h1">
+    <span class="h1-w">Find Your</span>
+    <span class="h1-g">Graduation Moments</span>
+  </h1>
+
+  <p class="hero-desc">
+    Upload a clear photo and our AI instantly finds every graduation
+    photo featuring your face — from the entire ceremony archive.
+  </p>
+  <p class="hero-ar ar">تهانينا يا خريجي دفعة ٢٠٢٥ 🎓</p>
+
+  <div class="scroll-ind">
+    <span class="s-label">Upload Below</span>
+    <div class="s-track"><div class="s-pill"></div></div>
   </div>
 </section>
 
-<!-- ── UPLOAD ── -->
-<section class="upload-section">
+<!-- ══ UPLOAD ══ -->
+<div class="gem-div"><div class="gem-rule"></div><div class="gem"></div><div class="gem-rule"></div></div>
+
+<section class="wrap" style="padding-top:56px">
+  <div class="sec-label">
+    <div class="sec-rule"></div>
+    <div class="sec-num">Step 01 — Upload Your Photo</div>
+    <div class="sec-rule r"></div>
+  </div>
+
   <div class="card">
     <div class="card-head">
       <div class="card-icon">📸</div>
       <div>
-        <div class="card-title">Upload Your Reference Photos</div>
+        <div class="card-title">Reference Photos</div>
         <div class="card-sub">Use 3–5 clear, well-lit, front-facing photos · JPG or PNG · Max 16 MB each</div>
       </div>
     </div>
@@ -562,62 +401,62 @@ select option { background: #0d1c38; }
       <input type="file" id="fileInput" accept="image/*" multiple hidden>
 
       <div class="drop-zone" id="dropZone">
-        <div class="drop-icon">🖼️</div>
-        <div class="drop-title">Upload Your Photos</div>
-        <p class="drop-sub">Click to browse or drag &amp; drop here.<br>Clear, front-facing face photos give the best results.</p>
+        <div class="dz-rings">
+          <div class="dz-ring"></div>
+          <div class="dz-ring"></div>
+          <div class="dz-ring"></div>
+          <div class="dz-core">🖼️</div>
+        </div>
+        <div class="dz-title">Upload Your Photos</div>
+        <p class="dz-sub">Click to browse or drag &amp; drop here.<br>Clear, front-facing photos give the best results.</p>
       </div>
 
       <div id="previewArea" style="display:none">
-        <div class="preview-header">
+        <div class="prev-hdr">
           <div>
-            <div class="preview-title">Reference Photos</div>
-            <div class="preview-count" id="previewCount"></div>
+            <div class="prev-title">Reference Photos Ready</div>
+            <div class="prev-count" id="prevCount"></div>
           </div>
           <button class="btn btn-outline" id="addMoreBtn">+ Add More</button>
         </div>
-        <div class="preview-grid" id="previewGrid"></div>
+        <div class="prev-grid" id="prevGrid"></div>
       </div>
 
       <button class="btn btn-search" id="searchBtn" disabled>
-        🔍 Find My Graduation Photos
+        🔍 &nbsp; Find My Graduation Photos
       </button>
     </div>
   </div>
 </section>
 
-<!-- ── RESULTS ── -->
-<section class="results-section" id="resultsSection" style="display:none">
+<!-- ══ RESULTS ══ -->
+<section class="wrap-wide" id="resultsSection" style="display:none;padding-top:56px">
+  <div class="sec-label" style="max-width:960px;margin:0 auto 32px">
+    <div class="sec-rule"></div>
+    <div class="sec-num">Step 02 — Your Graduation Photos</div>
+    <div class="sec-rule r"></div>
+  </div>
   <div class="card">
-    <div class="results-head">
-      <div class="results-title">
-        <span class="live-dot"></span>
-        <span id="resultCount">0</span> Photos Discovered
-      </div>
-      <div class="results-sub" id="resultSub"></div>
-      <div class="results-actions">
+    <div class="res-head">
+      <div class="res-title"><span class="live-dot"></span><span id="resultCount">0</span> Photos Discovered</div>
+      <div class="res-sub" id="resultSub"></div>
+      <div class="res-actions">
         <button class="btn btn-outline" id="selectAllBtn">Select All</button>
         <button class="btn btn-blue"  id="dlSelectedBtn" disabled>⬇ Download Selected (<span id="selCount">0</span>)</button>
         <button class="btn btn-green" id="dlAllBtn">⬇ Download All</button>
       </div>
     </div>
-
     <div class="filter-bar">
       <div>
-        <label class="filter-label">Min Confidence</label>
-        <div class="filter-row">
-          <input type="range" id="confSlider" min="30" max="99" value="40" step="1">
-          <span class="conf-val" id="confVal">40%</span>
-        </div>
+        <label class="f-label">Min Confidence</label>
+        <div class="f-row"><input type="range" id="confSlider" min="30" max="99" value="40" step="1"><span class="conf-val" id="confVal">40%</span></div>
       </div>
       <div>
-        <label class="filter-label">Sort By</label>
-        <select id="sortSel">
-          <option value="conf">Highest Match First</option>
-          <option value="name">Filename A–Z</option>
-        </select>
+        <label class="f-label">Sort By</label>
+        <select id="sortSel"><option value="conf">Highest Match First</option><option value="name">Filename A–Z</option></select>
       </div>
       <div>
-        <label class="filter-label">Grid Size</label>
+        <label class="f-label">Grid Size</label>
         <div class="view-btns">
           <button class="view-btn" data-grid="s">S</button>
           <button class="view-btn active" data-grid="m">M</button>
@@ -625,27 +464,31 @@ select option { background: #0d1c38; }
         </div>
       </div>
       <div>
-        <label class="filter-label">Search Filename</label>
-        <input type="text" id="searchInput" placeholder="Filter by filename...">
+        <label class="f-label">Search Filename</label>
+        <input type="text" id="searchInput" placeholder="Filter by filename…">
       </div>
     </div>
-
     <div class="photo-grid" id="photoGrid"></div>
   </div>
 </section>
 
-<!-- ── FOOTER ── -->
+<!-- ══ FOOTER ══ -->
 <footer class="footer">
+  <div class="footer-logos">
+    <img src="college.png" alt="Faculty of Agriculture" onerror="this.style.display='none'">
+    <div class="footer-sep"></div>
+    <img src="union.png" alt="Students Union" onerror="this.style.display='none'">
+  </div>
   <div class="footer-text">
     <span class="footer-gold">Students Union</span> · Faculty of Agriculture · Alexandria University<br>
-    <span class="arabic" style="direction:rtl;display:block;margin-top:4px">اتحاد طلاب كلية الزراعة — جامعة الإسكندرية</span><br>
+    <span class="ar" style="display:block;margin-top:4px">اتحاد طلاب كلية الزراعة — جامعة الإسكندرية</span><br>
     Powered by Advanced AI Face Recognition · Graduation Class of 2025
   </div>
 </footer>
 
-</div><!-- /page -->
+</div>
 
-<!-- ── LIGHTBOX ── -->
+<!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" style="display:none" role="dialog" aria-modal="true">
   <button class="lb-close" id="lbClose">✕</button>
   <button class="lb-nav lb-prev" id="lbPrev">‹</button>
@@ -653,10 +496,7 @@ select option { background: #0d1c38; }
   <div class="lb-wrap">
     <img class="lb-img" id="lbImg" src="" alt="">
     <div class="lb-info">
-      <div>
-        <div class="lb-fn"  id="lbFilename"></div>
-        <div class="lb-meta" id="lbMeta"></div>
-      </div>
+      <div><div class="lb-fn" id="lbFilename"></div><div class="lb-meta" id="lbMeta"></div></div>
       <a class="btn btn-gold" id="lbDownload" href="#" download>⬇ Download</a>
     </div>
     <div class="lb-hint">← Previous &nbsp;·&nbsp; Next → &nbsp;·&nbsp; ESC to close</div>
@@ -664,436 +504,219 @@ select option { background: #0d1c38; }
 </div>
 
 <script>
-/* ═══════════════════════════════════════════
-   CONFIG
-   Change API_BASE to match where your backend is running.
-   Examples:
-     Local dev:    'http://127.0.0.1:5001'
-     Railway:      'https://yourapp.railway.app'
-     Render:       'https://yourapp.onrender.com'
-═══════════════════════════════════════════ */
 const API_BASE = 'http://127.0.0.1:5001';
+let files=[], previews=[], results=[], filtered=[], selected=new Set();
+let lbIndex=0, gridSize='m', allSel=false;
 
-/* ═══════════════════════════════════════════
-   STATE
-═══════════════════════════════════════════ */
-let files    = [];
-let previews = [];
-let results  = [];
-let filtered = [];
-let selected = new Set();
-let lbIndex  = 0;
-let gridSize = 'm';
+/* ══════════════════════════════════════════
+   STAR + PARTICLE CANVAS
+   130 twinkling stars (gold-weighted) +
+   60 rising gold motes — all clearly visible
+══════════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('starCanvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H;
+  const stars = [], motes = [];
 
-/* ═══════════════════════════════════════════
-   BACKGROUND STARS
-═══════════════════════════════════════════ */
-(function buildStars() {
-  const el = document.getElementById('bgStars');
-  for (let i = 0; i < 90; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    const size = Math.random() * 2.2 + 0.4;
-    s.style.cssText = `
-      width:${size}px;height:${size}px;
-      top:${Math.random()*72}%;left:${Math.random()*100}%;
-      --min-op:${(Math.random()*.15+.05).toFixed(2)};
-      --max-op:${(Math.random()*.55+.2).toFixed(2)};
-      --d:${(Math.random()*3+2).toFixed(1)}s;
-      --delay:-${(Math.random()*4).toFixed(1)}s;
-    `;
-    el.appendChild(s);
+  function resize() { W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* Twinkling stars */
+  for (let i = 0; i < 140; i++) {
+    stars.push({
+      x: Math.random() * 1,          /* fraction, resolved in draw */
+      y: Math.random() * 0.72,       /* upper 72% */
+      r: Math.random() * 1.5 + 0.3,
+      base: Math.random() * 0.4 + 0.15,
+      amp:  Math.random() * 0.4 + 0.12,
+      spd:  Math.random() * 0.7 + 0.2,
+      ph:   Math.random() * Math.PI * 2,
+      gold: Math.random() < 0.30
+    });
   }
+
+  /* Rising motes */
+  for (let i = 0; i < 65; i++) {
+    motes.push({
+      x:    Math.random(),
+      y:    Math.random(),           /* fraction */
+      vx:  (Math.random() - .5) * 0.0002,
+      vy:  -(Math.random() * 0.0004 + 0.0001),
+      r:    Math.random() * 1.6 + 0.5,
+      op:   Math.random() * 0.55 + 0.18,
+      gold: Math.random() < 0.45
+    });
+  }
+
+  function loop(ts) {
+    ctx.clearRect(0, 0, W, H);
+    const t = ts * 0.001;
+
+    /* Stars */
+    stars.forEach(s => {
+      const op = s.base + s.amp * Math.sin(t * s.spd + s.ph);
+      ctx.beginPath();
+      ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.gold
+        ? `rgba(240,198,52,${op})`
+        : `rgba(190,215,255,${op * 0.65})`;
+      ctx.fill();
+    });
+
+    /* Motes */
+    motes.forEach(m => {
+      m.x += m.vx; m.y += m.vy;
+      if (m.y < -0.02) { m.y = 1.02; m.x = Math.random(); }
+      if (m.x < 0) m.x = 1; if (m.x > 1) m.x = 0;
+      ctx.beginPath();
+      ctx.arc(m.x * W, m.y * H, m.r, 0, Math.PI * 2);
+      ctx.fillStyle = m.gold
+        ? `rgba(212,167,44,${m.op})`
+        : `rgba(150,185,240,${m.op * 0.5})`;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
 })();
 
-/* ═══════════════════════════════════════════
-   TOAST
-═══════════════════════════════════════════ */
-function toast(msg, type = 'info', duration = 4500) {
-  const tc = document.getElementById('toastContainer');
-  const t  = document.createElement('div');
-  t.className = `toast ${type}`;
-  t.textContent = msg;
-  tc.appendChild(t);
-  setTimeout(() => {
-    t.style.opacity = '0';
-    t.style.transition = 'opacity .4s';
-    setTimeout(() => t.remove(), 400);
-  }, duration);
+/* TOAST */
+function toast(msg, type='info', ms=4500) {
+  const tc=document.getElementById('toastWrap');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;t.textContent=msg;tc.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400)},ms);
 }
 
-/* ═══════════════════════════════════════════
-   DIAGNOSTICS BANNER
-   Shown below header — reports backend status
-   clearly so users (and developers) know what's wrong.
-═══════════════════════════════════════════ */
-function showDiag(type, title, detail) {
-  const banner = document.getElementById('diagBanner');
-  banner.innerHTML = `
-    <div class="diag-box diag-${type}">
-      <div class="diag-icon">${type==='ok'?'✅':type==='warn'?'⚠️':'❌'}</div>
-      <div>
-        <div class="diag-title">${title}</div>
-        <div class="diag-detail">${detail}</div>
-      </div>
-    </div>`;
-}
-
-/* ═══════════════════════════════════════════
-   HEALTH CHECK — runs on page load
-═══════════════════════════════════════════ */
-window.addEventListener('load', async () => {
-  try {
-    const controller = new AbortController();
-    const tid = setTimeout(() => controller.abort(), 6000);
-
-    const res  = await fetch(`${API_BASE}/health`, { signal: controller.signal });
-    clearTimeout(tid);
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-    const data = await res.json();
-
-    // Update live stat
-    if (data.total_photos) {
-      document.getElementById('statPhotos').textContent =
-        parseInt(data.total_photos).toLocaleString() + '+';
-    }
-
-    // Show warnings if data files are missing
-    if (data.missing_files && data.missing_files.length > 0) {
-      showDiag('warn',
-        'Backend connected — but some data files are missing',
-        `Missing: <code>${data.missing_files.join('</code>, <code>')}</code>. ` +
-        `Run your indexing script to generate them. ` +
-        `Photos indexed: <b>${data.total_photos}</b>, ` +
-        `Faces in DB: <b>${data.total_faces}</b>, ` +
-        `GDrive mapped: <b>${data.gdrive_mapped}</b>.`
-      );
-    } else if (data.total_faces === 0) {
-      showDiag('warn',
-        'Backend connected — face database is empty',
-        `No face encodings found. Run your indexing script first. ` +
-        `GDrive entries: <b>${data.gdrive_mapped}</b>.`
-    );
-    } else if (data.gdrive_mapped === 0) {
-      showDiag('warn',
-        'Backend connected — GDrive mapping is empty',
-        `Faces are indexed (<b>${data.total_faces}</b>) but no GDrive file IDs are mapped. ` +
-        `Results will be found but photos won't be displayable.`
-      );
-    } else {
-      showDiag('ok',
-        `Backend ready — ${parseInt(data.total_photos).toLocaleString()} photos indexed`,
-        `Faces in DB: <b>${data.total_faces}</b> · ` +
-        `GDrive mapped: <b>${data.gdrive_mapped}</b> · ` +
-        `Tolerance: <b>${data.tolerance}</b>`
-      );
-    }
-
-  } catch (err) {
-    const isAbort  = err.name === 'AbortError';
-    const isCORS   = err.message.includes('Failed to fetch') || err.message.includes('NetworkError');
-
-    let detail = '';
-    if (isAbort) {
-      detail = `Request timed out after 6 s. Is Flask running? Try: <code>python app.py</code> in your backend folder.`;
-    } else if (isCORS) {
-      detail = `Could not reach <code>${API_BASE}</code>. ` +
-        `Possible causes: Flask isn't running · wrong port · CORS blocked (open DevTools → Network for details).`;
-    } else {
-      detail = `Error: <code>${err.message}</code> · Target: <code>${API_BASE}/health</code>`;
-    }
-
-    showDiag('error', 'Cannot reach backend', detail);
-    console.error('[health check]', err);
-  }
-});
-
-/* ═══════════════════════════════════════════
-   FILE HANDLING
-═══════════════════════════════════════════ */
+/* FILE HANDLING */
 const fileInput   = document.getElementById('fileInput');
 const dropZone    = document.getElementById('dropZone');
 const previewArea = document.getElementById('previewArea');
-const previewGrid = document.getElementById('previewGrid');
-const previewCount= document.getElementById('previewCount');
+const prevGrid    = document.getElementById('prevGrid');
+const prevCount   = document.getElementById('prevCount');
 const searchBtn   = document.getElementById('searchBtn');
-const addMoreBtn  = document.getElementById('addMoreBtn');
 
-dropZone.addEventListener('click',   () => fileInput.click());
-addMoreBtn.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', e => {
-  handleFiles(Array.from(e.target.files));
-  fileInput.value = ''; // reset so same file can be re-added
-});
+dropZone.addEventListener('click',()=>fileInput.click());
+document.getElementById('addMoreBtn').addEventListener('click',()=>fileInput.click());
+fileInput.addEventListener('change',e=>{handleFiles(Array.from(e.target.files));fileInput.value='';});
+['dragenter','dragover'].forEach(ev=>dropZone.addEventListener(ev,e=>{e.preventDefault();dropZone.classList.add('drag-over')}));
+['dragleave','drop'].forEach(ev=>dropZone.addEventListener(ev,e=>{e.preventDefault();dropZone.classList.remove('drag-over')}));
+dropZone.addEventListener('drop',e=>handleFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'))));
 
-['dragenter','dragover'].forEach(ev =>
-  dropZone.addEventListener(ev, e => { e.preventDefault(); dropZone.classList.add('drag-over'); }));
-['dragleave','drop'].forEach(ev =>
-  dropZone.addEventListener(ev, e => { e.preventDefault(); dropZone.classList.remove('drag-over'); }));
-dropZone.addEventListener('drop', e =>
-  handleFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'))));
-
-function handleFiles(newFiles) {
-  if (!newFiles.length) return;
-  files    = [...files, ...newFiles];
-  previews = [...previews, ...newFiles.map(f => URL.createObjectURL(f))];
-  renderPreviews();
-  dropZone.style.display    = 'none';
-  previewArea.style.display = '';
-  searchBtn.disabled        = false;
+function handleFiles(nf) {
+  if (!nf.length) return;
+  files=[...files,...nf];previews=[...previews,...nf.map(f=>URL.createObjectURL(f))];
+  renderPreviews();dropZone.style.display='none';previewArea.style.display='';searchBtn.disabled=false;
 }
-
 function removeFile(i) {
   URL.revokeObjectURL(previews[i]);
-  files    = files.filter((_,j) => j !== i);
-  previews = previews.filter((_,j) => j !== i);
-  if (!files.length) {
-    dropZone.style.display    = '';
-    previewArea.style.display = 'none';
-    searchBtn.disabled        = true;
-  } else {
-    renderPreviews();
-  }
+  files=files.filter((_,j)=>j!==i);previews=previews.filter((_,j)=>j!==i);
+  if(!files.length){dropZone.style.display='';previewArea.style.display='none';searchBtn.disabled=true;}
+  else renderPreviews();
 }
-
 function renderPreviews() {
-  previewCount.textContent = `${files.length} photo${files.length !== 1 ? 's' : ''} ready`;
-  previewGrid.innerHTML = previews.map((src, i) => `
-    <div class="preview-thumb">
-      <img src="${src}" alt="Reference ${i+1}" loading="lazy">
-      <button class="preview-del" onclick="removeFile(${i})">×</button>
-    </div>`).join('');
+  prevCount.textContent=`${files.length} photo${files.length!==1?'s':''} ready`;
+  prevGrid.innerHTML=previews.map((src,i)=>`<div class="prev-thumb"><img src="${src}" alt="Ref ${i+1}" loading="lazy"><button class="prev-del" onclick="removeFile(${i})">×</button></div>`).join('');
 }
 
-/* ═══════════════════════════════════════════
-   SEARCH
-═══════════════════════════════════════════ */
+/* SEARCH */
 searchBtn.addEventListener('click', doSearch);
-
 async function doSearch() {
   if (!files.length) return;
-
-  searchBtn.disabled = true;
-  searchBtn.innerHTML = '<div class="spinner"></div> Scanning faces — please wait…';
-  results = []; selected.clear();
-  document.getElementById('resultsSection').style.display = 'none';
-
-  const form = new FormData();
-  files.forEach(f => form.append('face_image', f));
-
+  searchBtn.disabled=true;
+  searchBtn.innerHTML='<div class="spinner"></div> &nbsp; Scanning faces — please wait…';
+  results=[];selected.clear();document.getElementById('resultsSection').style.display='none';
+  const form=new FormData();files.forEach(f=>form.append('face_image',f));
   try {
-    const controller = new AbortController();
-    const tid = setTimeout(() => controller.abort(), 60000); // 60s timeout
-
-    const res = await fetch(`${API_BASE}/search-face`, {
-      method: 'POST',
-      body: form,
-      signal: controller.signal
-      // NOTE: Do NOT set Content-Type header manually when using FormData.
-      // The browser must set it automatically with the correct boundary.
-    });
-    clearTimeout(tid);
-
-    let data;
-    try {
-      data = await res.json();
-    } catch {
-      throw new Error(`Server returned non-JSON response (HTTP ${res.status}). Check Flask logs.`);
-    }
-
-    if (!res.ok) {
-      throw new Error(data.error || `Server error ${res.status}`);
-    }
-
-    // Warn about skipped photos
-    if (data.skipped_no_gdrive > 0) {
-      toast(`⚠️ ${data.skipped_no_gdrive} matches found but skipped — no GDrive mapping. Check gdrive_file_mappingf.json.`, 'info', 8000);
-    }
-
-    if (!data.matches?.length) {
-      if (data.warning) {
-        toast(`⚠️ ${data.warning}`, 'error', 8000);
-      } else {
-        toast('No matching photos found. Try uploading clearer, front-facing photos.', 'error', 6000);
-      }
-    } else {
-      results = data.matches;
-      toast(`Found ${results.length} photos featuring you! 🎉`, 'success');
-      renderResults();
-      document.getElementById('resultsSection').style.display = '';
-      document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-  } catch (err) {
-    console.error('[search-face]', err);
-    const isCORS    = err.message.includes('Failed to fetch') || err.message.includes('NetworkError');
-    const isTimeout = err.name === 'AbortError';
-
-    let msg = err.message;
-    if (isTimeout) msg = 'Request timed out (60 s). Face recognition may be taking too long.';
-    if (isCORS)    msg = `Cannot reach ${API_BASE}. Is Flask running? Check the browser console for CORS details.`;
-
-    toast(`Error: ${msg}`, 'error', 9000);
-  } finally {
-    searchBtn.disabled  = false;
-    searchBtn.innerHTML = '🔍 Find My Graduation Photos';
-  }
+    const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),60000);
+    const res=await fetch(`${API_BASE}/search-face`,{method:'POST',body:form,signal:ctrl.signal});clearTimeout(tid);
+    let data;try{data=await res.json();}catch{throw new Error(`Non-JSON (HTTP ${res.status})`)}
+    if(!res.ok)throw new Error(data.error||`Server error ${res.status}`);
+    if(data.skipped_no_gdrive>0)toast(`⚠️ ${data.skipped_no_gdrive} matches skipped — no GDrive mapping.`,'info',8000);
+    if(!data.matches?.length){toast(data.warning||'No matching photos found. Try clearer, front-facing photos.','error',6000);}
+    else{results=data.matches;toast(`Found ${results.length} photos featuring you! 🎉`,'success');renderResults();document.getElementById('resultsSection').style.display='';document.getElementById('resultsSection').scrollIntoView({behavior:'smooth',block:'start'});}
+  } catch(err) {
+    const isTO=err.name==='AbortError';const isCORS=err.message.includes('Failed to fetch')||err.message.includes('NetworkError');
+    let msg=err.message;if(isTO)msg='Request timed out (60 s).';if(isCORS)msg=`Cannot reach ${API_BASE}. Is Flask running?`;
+    toast(`Error: ${msg}`,'error',9000);
+  } finally {searchBtn.disabled=false;searchBtn.innerHTML='🔍 &nbsp; Find My Graduation Photos';}
 }
 
-/* ═══════════════════════════════════════════
-   RESULTS RENDERING
-═══════════════════════════════════════════ */
+/* RESULTS */
 function applyFilters() {
-  const minConf = parseInt(document.getElementById('confSlider').value) / 100;
-  const sort    = document.getElementById('sortSel').value;
-  const search  = document.getElementById('searchInput').value.toLowerCase();
-
-  filtered = results
-    .filter(r => r.confidence >= minConf)
-    .filter(r => !search || (r.filename || '').toLowerCase().includes(search));
-
-  if (sort === 'conf') filtered.sort((a,b) => b.confidence - a.confidence);
-  else filtered.sort((a,b) => (a.filename||'').localeCompare(b.filename||''));
+  const minC=parseInt(document.getElementById('confSlider').value)/100;
+  const sort=document.getElementById('sortSel').value;
+  const s=document.getElementById('searchInput').value.toLowerCase();
+  filtered=results.filter(r=>r.confidence>=minC).filter(r=>!s||(r.filename||'').toLowerCase().includes(s));
+  if(sort==='conf')filtered.sort((a,b)=>b.confidence-a.confidence);
+  else filtered.sort((a,b)=>(a.filename||'').localeCompare(b.filename||''));
 }
-
-function confClass(c) {
-  return c >= .8 ? 'conf-hi' : c >= .6 ? 'conf-mid' : 'conf-lo';
-}
-
+function cc(c){return c>=.8?'conf-hi':c>=.6?'conf-mid':'conf-lo'}
 function renderResults() {
   applyFilters();
-
-  document.getElementById('resultCount').textContent = filtered.length;
-  document.getElementById('resultSub').textContent =
-    `${selected.size > 0 ? selected.size + ' selected · ' : ''}Click photos to select · Use filters to refine`;
-
-  const grid = document.getElementById('photoGrid');
-  grid.innerHTML = '';
-  grid.className = 'photo-grid';
-
-  if (!filtered.length) {
-    grid.innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">🔍</div>
-        <div class="empty-text">No photos match your filters.<br>Try lowering the confidence threshold.</div>
-      </div>`;
-  } else {
-    const inner = document.createElement('div');
-    inner.className = `grid-${gridSize}`;
-    inner.innerHTML = filtered.map((r, i) => `
-      <div class="photo-card ${selected.has(r.photo_id) ? 'selected' : ''}" onclick="toggleSelect('${r.photo_id}')">
-        <img src="${r.thumbnail || r.url}" alt="Match ${i+1}" class="photo-img" loading="lazy"
-             onerror="this.style.opacity='.3';this.title='Image failed to load'">
-        <div class="photo-overlay">
-          <button class="view-full" onclick="event.stopPropagation();openLightbox(${i})">View Full Size</button>
-        </div>
-        <div class="check-box">
-          ${selected.has(r.photo_id) ? '<span style="color:#0a0600;font-size:13px;font-weight:bold">✓</span>' : ''}
-        </div>
-        <div class="conf-badge ${confClass(r.confidence)}">${Math.round(r.confidence * 100)}%</div>
+  document.getElementById('resultCount').textContent=filtered.length;
+  document.getElementById('resultSub').textContent=`${selected.size>0?selected.size+' selected · ':''}Click photos to select · Use filters to refine`;
+  const grid=document.getElementById('photoGrid');grid.innerHTML='';grid.className='photo-grid';
+  if(!filtered.length){grid.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">No photos match your filters.<br>Try lowering the confidence threshold.</div></div>`;}
+  else{
+    const inner=document.createElement('div');inner.className=`grid-${gridSize}`;
+    inner.innerHTML=filtered.map((r,i)=>`
+      <div class="photo-card ${selected.has(r.photo_id)?'selected':''}" onclick="toggleSel('${r.photo_id}')">
+        <img src="${r.thumbnail||r.url}" alt="Match ${i+1}" class="photo-img" loading="lazy" onerror="this.style.opacity='.3'">
+        <div class="photo-ov"><button class="view-full" onclick="event.stopPropagation();openLB(${i})">View Full Size</button></div>
+        <div class="check-box">${selected.has(r.photo_id)?'<span style="color:#060300;font-size:13px;font-weight:bold">✓</span>':''}</div>
+        <div class="conf-badge ${cc(r.confidence)}">${Math.round(r.confidence*100)}%</div>
       </div>`).join('');
     grid.appendChild(inner);
   }
-
-  document.getElementById('selCount').textContent   = selected.size;
-  document.getElementById('dlSelectedBtn').disabled = selected.size === 0;
+  document.getElementById('selCount').textContent=selected.size;
+  document.getElementById('dlSelectedBtn').disabled=selected.size===0;
 }
 
-/* ═══════════════════════════════════════════
-   SELECTION
-═══════════════════════════════════════════ */
-let allSelected = false;
-document.getElementById('selectAllBtn').addEventListener('click', () => {
-  allSelected = !allSelected;
-  if (allSelected) filtered.forEach(r => selected.add(r.photo_id));
-  else selected.clear();
-  document.getElementById('selectAllBtn').textContent = allSelected ? '✓ Deselect All' : 'Select All';
-  renderResults();
+/* SELECTION */
+document.getElementById('selectAllBtn').addEventListener('click',()=>{
+  allSel=!allSel;if(allSel)filtered.forEach(r=>selected.add(r.photo_id));else selected.clear();
+  document.getElementById('selectAllBtn').textContent=allSel?'✓ Deselect All':'Select All';renderResults();
 });
+function toggleSel(id){if(selected.has(id))selected.delete(id);else selected.add(id);renderResults();}
 
-function toggleSelect(id) {
-  if (selected.has(id)) selected.delete(id);
-  else selected.add(id);
-  renderResults();
+/* DOWNLOAD */
+document.getElementById('dlSelectedBtn').addEventListener('click',()=>dlItems(filtered.filter(r=>selected.has(r.photo_id))));
+document.getElementById('dlAllBtn').addEventListener('click',()=>dlItems(filtered));
+function dlItems(items){
+  if(!items.length){toast('No photos to download.','error');return}
+  toast(`Preparing ${items.length} download${items.length>1?'s':''}…`,'info');
+  items.forEach((item,i)=>setTimeout(()=>{const a=document.createElement('a');a.href=item.url;a.download=item.filename||`graduation_photo_${i+1}.jpg`;a.target='_blank';document.body.appendChild(a);a.click();a.remove();},i*350));
 }
 
-/* ═══════════════════════════════════════════
-   DOWNLOAD
-═══════════════════════════════════════════ */
-document.getElementById('dlSelectedBtn').addEventListener('click', () =>
-  downloadItems(filtered.filter(r => selected.has(r.photo_id))));
-document.getElementById('dlAllBtn').addEventListener('click', () =>
-  downloadItems(filtered));
+/* FILTERS */
+document.getElementById('confSlider').addEventListener('input',function(){document.getElementById('confVal').textContent=this.value+'%';renderResults();});
+document.getElementById('sortSel').addEventListener('change',renderResults);
+document.getElementById('searchInput').addEventListener('input',renderResults);
+document.querySelectorAll('.view-btn').forEach(btn=>{btn.addEventListener('click',function(){document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');gridSize=this.dataset.grid;renderResults();});});
 
-function downloadItems(items) {
-  if (!items.length) { toast('No photos to download.', 'error'); return; }
-  toast(`Preparing ${items.length} download${items.length > 1 ? 's' : ''}…`, 'info');
-  items.forEach((item, i) => {
-    setTimeout(() => {
-      const a = document.createElement('a');
-      a.href = item.url; a.download = item.filename || `graduation_photo_${i+1}.jpg`;
-      a.target = '_blank';
-      document.body.appendChild(a); a.click(); a.remove();
-    }, i * 350);
-  });
+/* LIGHTBOX */
+function openLB(idx){lbIndex=idx;updateLB();document.getElementById('lightbox').style.display='flex';document.body.style.overflow='hidden';}
+function closeLB(){document.getElementById('lightbox').style.display='none';document.body.style.overflow='';}
+function updateLB(){
+  const r=filtered[lbIndex];if(!r)return;
+  document.getElementById('lbImg').src=r.url;
+  document.getElementById('lbFilename').textContent=r.filename||`Photo ${lbIndex+1}`;
+  document.getElementById('lbMeta').textContent=`Photo ${lbIndex+1} of ${filtered.length} · Match: ${Math.round(r.confidence*100)}%`;
+  const dl=document.getElementById('lbDownload');dl.href=r.url;dl.download=r.filename||`graduation_${lbIndex+1}.jpg`;
 }
-
-/* ═══════════════════════════════════════════
-   FILTERS
-═══════════════════════════════════════════ */
-document.getElementById('confSlider').addEventListener('input', function() {
-  document.getElementById('confVal').textContent = this.value + '%';
-  renderResults();
-});
-document.getElementById('sortSel').addEventListener('change',    renderResults);
-document.getElementById('searchInput').addEventListener('input', renderResults);
-
-document.querySelectorAll('.view-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
-    gridSize = this.dataset.grid;
-    renderResults();
-  });
-});
-
-/* ═══════════════════════════════════════════
-   LIGHTBOX
-═══════════════════════════════════════════ */
-function openLightbox(idx) {
-  lbIndex = idx;
-  updateLightbox();
-  document.getElementById('lightbox').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-function closeLightbox() {
-  document.getElementById('lightbox').style.display = 'none';
-  document.body.style.overflow = '';
-}
-function updateLightbox() {
-  const r = filtered[lbIndex];
-  if (!r) return;
-  document.getElementById('lbImg').src              = r.url;
-  document.getElementById('lbFilename').textContent = r.filename || `Photo ${lbIndex+1}`;
-  document.getElementById('lbMeta').textContent     = `Photo ${lbIndex+1} of ${filtered.length} · Match: ${Math.round(r.confidence*100)}%`;
-  const dl = document.getElementById('lbDownload');
-  dl.href = r.url; dl.download = r.filename || `graduation_${lbIndex+1}.jpg`;
-}
-
-document.getElementById('lbClose').addEventListener('click', closeLightbox);
-document.getElementById('lbPrev').addEventListener('click',  () => { lbIndex = (lbIndex - 1 + filtered.length) % filtered.length; updateLightbox(); });
-document.getElementById('lbNext').addEventListener('click',  () => { lbIndex = (lbIndex + 1) % filtered.length; updateLightbox(); });
-document.getElementById('lightbox').addEventListener('click', e => {
-  if (e.target === document.getElementById('lightbox')) closeLightbox();
-});
-
-document.addEventListener('keydown', e => {
-  if (document.getElementById('lightbox').style.display === 'none') return;
-  if (e.key === 'Escape')      closeLightbox();
-  if (e.key === 'ArrowRight')  { lbIndex = (lbIndex+1) % filtered.length; updateLightbox(); }
-  if (e.key === 'ArrowLeft')   { lbIndex = (lbIndex-1+filtered.length) % filtered.length; updateLightbox(); }
+document.getElementById('lbClose').addEventListener('click',closeLB);
+document.getElementById('lbPrev').addEventListener('click',()=>{lbIndex=(lbIndex-1+filtered.length)%filtered.length;updateLB();});
+document.getElementById('lbNext').addEventListener('click',()=>{lbIndex=(lbIndex+1)%filtered.length;updateLB();});
+document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===document.getElementById('lightbox'))closeLB();});
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('lightbox').style.display==='none')return;
+  if(e.key==='Escape')closeLB();
+  if(e.key==='ArrowRight'){lbIndex=(lbIndex+1)%filtered.length;updateLB();}
+  if(e.key==='ArrowLeft'){lbIndex=(lbIndex-1+filtered.length)%filtered.length;updateLB();}
 });
 </script>
 </body>
