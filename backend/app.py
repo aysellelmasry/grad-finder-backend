@@ -4,12 +4,32 @@ import json
 import pickle
 import sys
 import traceback
-import numpy as np
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 from PIL import Image, ImageOps
 import logging
+
+# Try to import numpy - critical for face recognition
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError as e:
+    logger_temp = logging.getLogger(__name__)
+    logger_temp.warning(f"numpy not available: {e}")
+    NUMPY_AVAILABLE = False
+    # Create a stub to prevent NameError
+    class NumpyStub:
+        @staticmethod
+        def array(*args, **kwargs):
+            raise RuntimeError("numpy not installed")
+        @staticmethod
+        def mean(*args, **kwargs):
+            raise RuntimeError("numpy not installed")
+        @staticmethod
+        def empty(*args, **kwargs):
+            raise RuntimeError("numpy not installed")
+    np = NumpyStub()
 
 # Try to import face_recognition, but don't fail if it's not available
 try:
@@ -49,13 +69,18 @@ class Config:
     GDRIVE_THUMB  = "https://drive.google.com/thumbnail?id={}&sz=w500"
 
 # ── App setup ────────────────────────────────────────────
-app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = Config.MAX_UPLOAD_MB * 1024 * 1024
+try:
+    app = Flask(__name__)
+    app.config['MAX_CONTENT_LENGTH'] = Config.MAX_UPLOAD_MB * 1024 * 1024
 
-# FIX 1: Explicit CORS config — allow all origins, methods, and headers
-CORS(app, resources={r"/*": {"origins": "*"}},
-     allow_headers=["Content-Type", "Authorization"],
-     methods=["GET", "POST", "OPTIONS"])
+    # FIX 1: Explicit CORS config — allow all origins, methods, and headers
+    CORS(app, resources={r"/*": {"origins": "*"}},
+         allow_headers=["Content-Type", "Authorization"],
+         methods=["GET", "POST", "OPTIONS"])
+    logger.info("✓ Flask app initialized successfully")
+except Exception as e:
+    logger.error(f"FATAL: Failed to initialize Flask app: {e}", exc_info=True)
+    raise
 
 # ── Load data once at startup ────────────────────────────
 _data_cache = None   # FIX 2: manual cache instead of @lru_cache (avoids pickling issues)
