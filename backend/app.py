@@ -2,13 +2,31 @@ import os
 import io
 import json
 import pickle
+import sys
+import traceback
 import numpy as np
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import face_recognition
 from PIL import Image, ImageOps
 import logging
-from functools import lru_cache
+
+# Try to import face_recognition, but don't fail if it's not available
+try:
+    import face_recognition
+    FACE_RECOGNITION_AVAILABLE = True
+except ImportError as e:
+    logger_temp = logging.getLogger(__name__)
+    logger_temp.warning(f"face_recognition not available: {e}")
+    FACE_RECOGNITION_AVAILABLE = False
+    # Create a dummy module to prevent NameError
+    class FaceRecognitionStub:
+        @staticmethod
+        def face_encodings(*args, **kwargs):
+            raise RuntimeError("face_recognition not installed")
+        @staticmethod
+        def face_distance(*args, **kwargs):
+            raise RuntimeError("face_recognition not installed")
+    face_recognition = FaceRecognitionStub()
 
 # ── Logging ──────────────────────────────────────────────
 logging.basicConfig(
@@ -156,22 +174,46 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
     return response
 
+@app.route('/api/test', methods=['GET', 'POST', 'OPTIONS'])
+def api_test():
+    """Simple test endpoint to verify API is responding with JSON."""
+    return jsonify({'status': 'ok', 'message': 'API is working'})
+
+@app.route('/', methods=['GET'])
+def root():
+    """Root endpoint."""
+    return jsonify({'message': 'Graduation Finder API is running', 'endpoints': ['/health', '/search-face', '/api/test']})
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """Catch-all error handler that always returns JSON."""
+    logger.error(f"Unhandled exception: {e}", exc_info=True)
+    return jsonify({'error': str(e), 'type': type(e).__name__}), 500
+
 @app.route('/health', methods=['GET', 'OPTIONS'])
 def health():
-    db, meta, gdrive, ids, enc_array = load_data()
-    missing = []
-    for f in [Config.ENCODINGS_FILE, Config.METADATA_FILE, Config.GDRIVE_MAPPING_FILE]:
-        if not os.path.exists(f):
-            missing.append(f)
-    return jsonify({
-        "status":        "healthy",
-        "total_photos":  len(meta),
-        "total_faces":   len(enc_array),
-        "gdrive_mapped": len(gdrive),
-        "tolerance":     Config.TOLERANCE,
-        "missing_files": missing,   # FIX 7: expose missing files to help debug
-        "db_records":    len(db),
-    })
+    try:
+        db, meta, gdrive, ids, enc_array = load_data()
+        missing = []
+        for f in [Config.ENCODINGS_FILE, Config.METADATA_FILE, Config.GDRIVE_MAPPING_FILE]:
+            if not os.path.exists(f):
+                missing.append(f)
+        return jsonify({
+            "status":        "healthy",
+            "total_photos":  len(meta),
+            "total_faces":   len(enc_array),
+            "gdrive_mapped": len(gdrive),
+            "tolerance":     Config.TOLERANCE,
+            "missing_files": missing,   # FIX 7: expose missing files to help debug
+            "db_records":    len(db),
+        })
+    except Exception as e:
+        logger.error(f"Health check error: {e}", exc_info=True)
+        return jsonify({
+            'status': 'error',
+            'error': str(e),
+            'message': 'Face database failed to load. Check server logs.'
+        }), 500
 
 @app.route('/search-face', methods=['POST', 'OPTIONS'])
 def search_face():
@@ -179,88 +221,92 @@ def search_face():
     if request.method == 'OPTIONS':
         return '', 204
 
-    files = request.files.getlist('face_image')
-    if not files or all(f.filename == '' for f in files):
-        return jsonify({'error': 'No images uploaded. Field name must be "face_image".'}), 400
+    try:
+        files = request.files.getlist('face_image')
+        if not files or all(f.filename == '' for f in files):
+            return jsonify({'error': 'No images uploaded. Field name must be "face_image".'}), 400
 
-    # 1 — Encode uploaded photos
-    query_encodings = encode_uploaded_images(files)
-    if not query_encodings:
+        # 1 — Encode uploaded photos
+        query_encodings = encode_uploaded_images(files)
+        if not query_encodings:
+            return jsonify({
+                'error': (
+                    'No face detected in your uploaded photo(s). '
+                    'Please use a clear, well-lit, front-facing photo.'
+                )
+            }), 400
+
+        # FIX 8: average all query encodings into one representative vector
+        query_enc = np.mean(query_encodings, axis=0)
+
+        # 2 — Load pre-built matrix and search
+        db, meta, gdrive, ids, enc_array = load_data()
+
+        if len(enc_array) == 0:
+            logger.warning("Encoding matrix is empty — returning no matches")
+            return jsonify({
+                'success': True,
+                'matches': [],
+                'total_found': 0,
+                'warning': 'Face database is empty. Run your indexing script first.'
+            })
+
+        # 3 — Vectorised distance computation
+        distances = face_recognition.face_distance(enc_array, query_enc)
+        logger.info(f"Distance stats — min: {distances.min():.3f}, "
+                    f"max: {distances.max():.3f}, "
+                    f"below tolerance ({Config.TOLERANCE}): "
+                    f"{(distances < Config.TOLERANCE).sum()}")
+
+        # 4 — Group by photo_id, keep minimum distance per photo
+        best = {}
+        for photo_id, dist in zip(ids, distances):
+            if photo_id not in best or dist < best[photo_id]:
+                best[photo_id] = dist
+
+        # 5 — Filter and build response
+        matches = []
+        skipped_no_gdrive = 0
+        for photo_id, dist in best.items():
+            if dist >= Config.TOLERANCE:
+                continue
+            info     = meta.get(photo_id, {})
+            filename = info.get('filename', f"{photo_id}.jpg")
+            full_url, thumb_url = get_gdrive_urls(filename, gdrive)
+
+            # FIX 9: don't skip photos just because GDrive mapping is missing —
+            # include them with a placeholder so the UI can still show something
+            if not full_url:
+                skipped_no_gdrive += 1
+                logger.debug(f"No GDrive URL for {filename} (id={photo_id})")
+                # Uncomment next line to include unlinked matches anyway:
+                # full_url = thumb_url = ''
+                continue
+
+            matches.append({
+                'photo_id':   photo_id,
+                'url':        full_url,
+                'thumbnail':  thumb_url,
+                'filename':   filename,
+                'confidence': round(float(1 - dist), 4)
+            })
+
+        matches.sort(key=lambda x: x['confidence'], reverse=True)
+
+        logger.info(
+            f"Search complete: {len(matches)} matches returned, "
+            f"{skipped_no_gdrive} skipped (no GDrive mapping)"
+        )
+
         return jsonify({
-            'error': (
-                'No face detected in your uploaded photo(s). '
-                'Please use a clear, well-lit, front-facing photo.'
-            )
-        }), 400
-
-    # FIX 8: average all query encodings into one representative vector
-    query_enc = np.mean(query_encodings, axis=0)
-
-    # 2 — Load pre-built matrix and search
-    db, meta, gdrive, ids, enc_array = load_data()
-
-    if len(enc_array) == 0:
-        logger.warning("Encoding matrix is empty — returning no matches")
-        return jsonify({
-            'success': True,
-            'matches': [],
-            'total_found': 0,
-            'warning': 'Face database is empty. Run your indexing script first.'
+            'success':           True,
+            'matches':           matches,
+            'total_found':       len(matches),
+            'skipped_no_gdrive': skipped_no_gdrive,
         })
-
-    # 3 — Vectorised distance computation
-    distances = face_recognition.face_distance(enc_array, query_enc)
-    logger.info(f"Distance stats — min: {distances.min():.3f}, "
-                f"max: {distances.max():.3f}, "
-                f"below tolerance ({Config.TOLERANCE}): "
-                f"{(distances < Config.TOLERANCE).sum()}")
-
-    # 4 — Group by photo_id, keep minimum distance per photo
-    best = {}
-    for photo_id, dist in zip(ids, distances):
-        if photo_id not in best or dist < best[photo_id]:
-            best[photo_id] = dist
-
-    # 5 — Filter and build response
-    matches = []
-    skipped_no_gdrive = 0
-    for photo_id, dist in best.items():
-        if dist >= Config.TOLERANCE:
-            continue
-        info     = meta.get(photo_id, {})
-        filename = info.get('filename', f"{photo_id}.jpg")
-        full_url, thumb_url = get_gdrive_urls(filename, gdrive)
-
-        # FIX 9: don't skip photos just because GDrive mapping is missing —
-        # include them with a placeholder so the UI can still show something
-        if not full_url:
-            skipped_no_gdrive += 1
-            logger.debug(f"No GDrive URL for {filename} (id={photo_id})")
-            # Uncomment next line to include unlinked matches anyway:
-            # full_url = thumb_url = ''
-            continue
-
-        matches.append({
-            'photo_id':   photo_id,
-            'url':        full_url,
-            'thumbnail':  thumb_url,
-            'filename':   filename,
-            'confidence': round(float(1 - dist), 4)
-        })
-
-    matches.sort(key=lambda x: x['confidence'], reverse=True)
-
-    logger.info(
-        f"Search complete: {len(matches)} matches returned, "
-        f"{skipped_no_gdrive} skipped (no GDrive mapping)"
-    )
-
-    return jsonify({
-        'success':           True,
-        'matches':           matches,
-        'total_found':       len(matches),
-        'skipped_no_gdrive': skipped_no_gdrive,
-    })
+    except Exception as e:
+        logger.error(f"Search error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 @app.errorhandler(413)
 def too_large(e):
@@ -272,5 +318,8 @@ def server_error(e):
     return jsonify({'error': 'Internal server error. Please try again.'}), 500
 
 if __name__ == '__main__':
-    load_data()  # warm up — shows missing files immediately on start
+    try:
+        load_data()  # warm up — shows missing files immediately on start
+    except Exception as e:
+        logger.warning(f"Failed to load data at startup: {e}")
     app.run(host='0.0.0.0', port=int(os.getenv('PORT', 5001)), debug=True)

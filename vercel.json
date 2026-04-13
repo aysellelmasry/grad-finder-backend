@@ -1,9 +1,15 @@
 {
   "version": 2,
+  "buildCommand": "pip install -r requirements.txt && python3 -c \"import flask; import face_recognition\" 2>/dev/null || true",
   "builds": [
     {
       "src": "api/index.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "250mb",
+        "runtime": "python3.11",
+        "pythonVersion": "3.11"
+      }
     },
     {
       "src": "frontend/**",
