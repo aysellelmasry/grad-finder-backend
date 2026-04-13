@@ -504,7 +504,10 @@ select option{background:#081428}
 </div>
 
 <script>
-const API_BASE = 'http://127.0.0.1:5001';
+// Use current domain for Vercel deployment; fall back to localhost for development
+const API_BASE = typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
+  ? window.location.origin 
+  : 'http://127.0.0.1:5001';
 let files=[], previews=[], results=[], filtered=[], selected=new Set();
 let lbIndex=0, gridSize='m', allSel=false;
 

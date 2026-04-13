@@ -1,0 +1,27 @@
+# Ignore development files
+.git
+.gitignore
+README.md
+.DS_Store
+
+# Ignore test/cache
+__pycache__
+*.pyc
+*.pyo
+tests/
+.pytest_cache
+.coverage
+
+# Ignore secret files
+token.pickle
+.env.local
+.env.*.local
+
+# Ignore node/build
+node_modules/
+.next/
+.vercel/
+
+# Keep necessary data files for deployment
+# Note: face_encodings.pkl, photos_metadata.pkl, and gdrive_file_mappingf.json 
+# must be uploaded/deployed separately as they contain the face database
