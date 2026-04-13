@@ -58,9 +58,19 @@ logger = logging.getLogger(__name__)
 
 # ── Config ───────────────────────────────────────────────
 class Config:
-    ENCODINGS_FILE      = os.getenv('ENCODINGS_FILE',  'face_encodings.pkl')
-    METADATA_FILE       = os.getenv('METADATA_FILE',   'photos_metadata.pkl')
-    GDRIVE_MAPPING_FILE = os.getenv('GDRIVE_FILE',     'gdrive_file_mappingf.json')
+    # Get app root directory - works on both local and Vercel
+    APP_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    # File paths - use env vars if set, otherwise construct from APP_ROOT
+    _encodings = os.getenv('ENCODINGS_FILE')
+    ENCODINGS_FILE = _encodings if _encodings else os.path.join(APP_ROOT, 'backend', 'face_encodings.pkl')
+    
+    _metadata = os.getenv('METADATA_FILE')
+    METADATA_FILE = _metadata if _metadata else os.path.join(APP_ROOT, 'backend', 'photos_metadata.pkl')
+    
+    _gdrive = os.getenv('GDRIVE_FILE')
+    GDRIVE_MAPPING_FILE = _gdrive if _gdrive else os.path.join(APP_ROOT, 'backend', 'gdrive_file_mappingf.json')
+    
     TOLERANCE           = float(os.getenv('TOLERANCE', '0.52'))
     MAX_UPLOAD_MB       = int(os.getenv('MAX_UPLOAD_MB', '16'))
     ALLOWED_ORIGINS     = os.getenv('ALLOWED_ORIGINS', '*').split(',')
@@ -72,6 +82,12 @@ class Config:
 try:
     app = Flask(__name__)
     app.config['MAX_CONTENT_LENGTH'] = Config.MAX_UPLOAD_MB * 1024 * 1024
+
+    # Log configuration for debugging
+    logger.info(f"App root directory: {Config.APP_ROOT}")
+    logger.info(f"Looking for encodings file: {Config.ENCODINGS_FILE}")
+    logger.info(f"Looking for metadata file: {Config.METADATA_FILE}")
+    logger.info(f"Looking for gdrive mapping file: {Config.GDRIVE_MAPPING_FILE}")
 
     # FIX 1: Explicit CORS config — allow all origins, methods, and headers
     CORS(app, resources={r"/*": {"origins": "*"}},
