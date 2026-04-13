@@ -31,23 +31,33 @@ except ImportError as e:
             raise RuntimeError("numpy not installed")
     np = NumpyStub()
 
-# Try to import face_recognition, but don't fail if it's not available
-try:
-    import face_recognition
-    FACE_RECOGNITION_AVAILABLE = True
-except ImportError as e:
-    logger_temp = logging.getLogger(__name__)
-    logger_temp.warning(f"face_recognition not available: {e}")
-    FACE_RECOGNITION_AVAILABLE = False
-    # Create a dummy module to prevent NameError
-    class FaceRecognitionStub:
-        @staticmethod
-        def face_encodings(*args, **kwargs):
-            raise RuntimeError("face_recognition not installed")
-        @staticmethod
-        def face_distance(*args, **kwargs):
-            raise RuntimeError("face_recognition not installed")
-    face_recognition = FaceRecognitionStub()
+# face_recognition will be imported lazily (only when search_face endpoint is called)
+# This prevents startup failures on Vercel where dlib system deps aren't available
+face_recognition = None
+FACE_RECOGNITION_AVAILABLE = False
+
+def _get_face_recognition():
+    """Lazy import of face_recognition - only load when needed."""
+    global face_recognition, FACE_RECOGNITION_AVAILABLE
+    if face_recognition is None:
+        try:
+            import face_recognition as fr
+            face_recognition = fr
+            FACE_RECOGNITION_AVAILABLE = True
+            logger.info("✓ face_recognition loaded on first use")
+        except Exception as e:
+            logger.warning(f"face_recognition not available: {e}")
+            FACE_RECOGNITION_AVAILABLE = False
+            # Return stub to prevent crashes
+            class FaceRecognitionStub:
+                @staticmethod
+                def face_encodings(*args, **kwargs):
+                    raise RuntimeError(f"face_recognition not available: {e}")
+                @staticmethod
+                def face_distance(*args, **kwargs):
+                    raise RuntimeError(f"face_recognition not available: {e}")
+            face_recognition = FaceRecognitionStub()
+    return face_recognition
 
 # ── Logging ──────────────────────────────────────────────
 logging.basicConfig(
@@ -171,6 +181,7 @@ def load_data():
 # ── Helpers ──────────────────────────────────────────────
 def encode_uploaded_images(files):
     """Extract face encodings from uploaded files. Returns list of 128-d vectors."""
+    fr = _get_face_recognition()  # Lazy load face_recognition
     encodings = []
     for file in files:
         if not file or file.filename == '':
@@ -182,7 +193,7 @@ def encode_uploaded_images(files):
             img.thumbnail((1200, 1200), Image.LANCZOS)
             arr = np.array(img)
             # FIX 4: increase num_jitters for better accuracy on single upload
-            found = face_recognition.face_encodings(arr, num_jitters=3, model='large')
+            found = fr.face_encodings(arr, num_jitters=3, model='large')
             if found:
                 encodings.append(found[0])
                 logger.info(f"  Encoded face from {file.filename}")
@@ -304,7 +315,8 @@ def search_face():
             })
 
         # 3 — Vectorised distance computation
-        distances = face_recognition.face_distance(enc_array, query_enc)
+        fr = _get_face_recognition()  # Ensure face_recognition is available
+        distances = fr.face_distance(enc_array, query_enc)
         logger.info(f"Distance stats — min: {distances.min():.3f}, "
                     f"max: {distances.max():.3f}, "
                     f"below tolerance ({Config.TOLERANCE}): "
