@@ -7,6 +7,7 @@ import traceback
 import numpy as np
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from werkzeug.exceptions import HTTPException
 from PIL import Image, ImageOps
 import logging
 
@@ -168,10 +169,15 @@ def get_gdrive_urls(filename, gdrive_map):
 
 @app.after_request
 def add_cors_headers(response):
-    """FIX 6: belt-and-suspenders CORS headers on every response."""
+    """FIX 6: belt-and-suspenders CORS headers on every response + force JSON content type."""
     response.headers['Access-Control-Allow-Origin']  = '*'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    
+    # Ensure all responses have JSON content type for consistency
+    if response.status_code >= 400 or response.content_type is None:
+        response.headers['Content-Type'] = 'application/json; charset=utf-8'
+    
     return response
 
 @app.route('/api/test', methods=['GET', 'POST', 'OPTIONS'])
@@ -187,8 +193,13 @@ def root():
 @app.errorhandler(Exception)
 def handle_exception(e):
     """Catch-all error handler that always returns JSON."""
-    logger.error(f"Unhandled exception: {e}", exc_info=True)
-    return jsonify({'error': str(e), 'type': type(e).__name__}), 500
+    try:
+        logger.error(f"Unhandled exception: {e}", exc_info=True)
+        return jsonify({'error': str(e), 'type': type(e).__name__}), 500
+    except Exception as inner_e:
+        # If jsonify fails, return plain dict
+        logger.error(f"Error handler itself failed: {inner_e}")
+        return {'error': 'Internal error', 'type': type(e).__name__}, 500
 
 @app.route('/health', methods=['GET', 'OPTIONS'])
 def health():
@@ -308,14 +319,49 @@ def search_face():
         logger.error(f"Search error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
+@app.errorhandler(400)
+def bad_request(e):
+    try:
+        return jsonify({'error': f'Bad request: {str(e)}'}), 400
+    except:
+        return {'error': 'Bad request'}, 400
+
+@app.errorhandler(404)
+def not_found(e):
+    try:
+        return jsonify({'error': 'Endpoint not found'}), 404
+    except:
+        return {'error': 'Endpoint not found'}, 404
+
+@app.errorhandler(405)
+def method_not_allowed(e):
+    try:
+        return jsonify({'error': 'Method not allowed'}), 405
+    except:
+        return {'error': 'Method not allowed'}, 405
+
 @app.errorhandler(413)
 def too_large(e):
-    return jsonify({'error': f'File too large. Maximum {Config.MAX_UPLOAD_MB} MB per upload.'}), 413
+    try:
+        return jsonify({'error': f'File too large. Maximum {Config.MAX_UPLOAD_MB} MB per upload.'}), 413
+    except:
+        return {'error': f'File too large. Maximum {Config.MAX_UPLOAD_MB} MB per upload.'}, 413
 
 @app.errorhandler(500)
 def server_error(e):
-    logger.error(f"500 error: {e}")
-    return jsonify({'error': 'Internal server error. Please try again.'}), 500
+    try:
+        logger.error(f"500 error: {e}", exc_info=True)
+        return jsonify({'error': 'Internal server error. Please try again.'}), 500
+    except:
+        return {'error': 'Internal server error'}, 500
+
+@app.errorhandler(HTTPException)
+def handle_http_exception(e):
+    try:
+        logger.error(f"HTTP exception {e.code}: {e.description}")
+        return jsonify({'error': str(e.description)}), e.code
+    except:
+        return {'error': str(e.description)}, getattr(e, 'code', 500)
 
 if __name__ == '__main__':
     try:
