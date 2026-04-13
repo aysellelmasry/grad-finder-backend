@@ -1,47 +1,22 @@
 """
 Vercel Python serverless handler for the Graduation Finder API.
-This module wraps the Flask app for Vercel's Python runtime with proper error handling.
+Imports and exports the Flask app for Vercel's Python runtime.
 """
 import sys
 import os
-import traceback
-from functools import wraps
 
-# Ensure backend dir and app root are in Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+# Add current directory and parent to path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.insert(0, current_dir)
+sys.path.insert(0, parent_dir)
 
-try:
-    from backend.app import app
-except ImportError as e:
-    print(f"FATAL: Failed to import Flask app: {e}")
-    traceback.print_exc()
-    # Create minimal app if import fails
-    from flask import Flask, jsonify
-    app = Flask(__name__)
-    
-    @app.errorhandler(500)
-    def handle_error(e):
-        return jsonify({'error': f'Import error: {str(e)}'}), 500
-    
-    @app.route('/health')
-    def health():
-        return jsonify({'error': 'Flask app failed to import', 'details': str(e)}), 500
+# Import the Flask app from backend.app
+from backend.app import app
 
-# Wrapper to ensure all responses have proper Content-Type
-original_wsgi = app.wsgi_app
+# These explicit exports help Vercel's Python runtime find the app
+application = app
 
-def cors_wrapper(environ, start_response):
-    def custom_start_response(status, response_headers, exc_info=None):
-        # Ensure JSON responses have correct content type
-        response_headers = list(response_headers)
-        has_content_type = any(h[0].lower() == 'content-type' for h in response_headers)
-        if not has_content_type:
-            response_headers.append(('Content-Type', 'application/json'))
-        return start_response(status, response_headers, exc_info)
-    
-    return original_wsgi(environ, custom_start_response)
+# Ensure app is available at module level for Vercel
+__all__ = ['app', 'application']
 
-app.wsgi_app = cors_wrapper
-
-# Export as `app` for Vercel's Python runtime
-__all__ = ['app']

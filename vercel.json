@@ -18,7 +18,7 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
+      "src": "/search-face",
       "dest": "api/index.py"
     },
     {
@@ -26,7 +26,7 @@
       "dest": "api/index.py"
     },
     {
-      "src": "/search-face",
+      "src": "/api/(.*)",
       "dest": "api/index.py"
     },
     {
